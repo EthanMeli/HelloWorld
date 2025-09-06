@@ -10,7 +10,7 @@ const lessonSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 1,
-    max: 10
+    max: 100
   },
   title: {
     type: String,
@@ -22,25 +22,30 @@ const lessonSchema = new mongoose.Schema({
     required: true
   },
   grammarTips: {
-    type: String,
-    required: true
+    type: String
   },
   vocabulary: [{
     word: String,
     translation: String,
     pronunciation: String
   }],
-  exercises: [{
-    question: String,
-    options: [String],
-    correctAnswer: Number,
-    explanation: String
-  }]
+  isActive: {
+    type: Boolean,
+    default: true
+  }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    transform: function(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
 });
 
-// Index for efficient querying by language and level
 lessonSchema.index({ language: 1, level: 1 });
+lessonSchema.index({ language: 1, isActive: 1 });
 
 module.exports = mongoose.model('Lesson', lessonSchema);

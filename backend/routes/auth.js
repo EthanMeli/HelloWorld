@@ -1,57 +1,49 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const { body, validationResult } = require('express-validator');
-const User = require('../models/User');
-const auth = require('../middleware/auth');
+const bcrypt = require('bcryptjs');
+const { User } = require('../models');
+const { generateToken } = require('../middleware/auth');
+const { validateRequest, schemas } = require('../middleware/validation');
 
 const router = express.Router();
 
-// Generate JWT token
-const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET || 'fallback-secret', {
-    expiresIn: '7d'
-  });
-};
-
-// @route   POST /api/auth/register
-// @desc    Register user
-// @access  Public
-router.post('/register', [
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 6 }),
-  body('username').trim().isLength({ min: 1, max: 50 }),
-  body('activeLanguage').isIn(['fr', 'de'])
-], async (req, res) => {
+// Register new user
+router.post('/register', validateRequest(schemas.register), async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { email, password, username, activeLanguage } = req.body;
+    const { email, username, password, activeLanguage } = req.body;
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Create new user
-    const user = new User({
-      email,
-      password,
-      username,
-      activeLanguage
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }]
     });
 
+    if (existingUser) {
+      return res.status(400).json({
+        error: 'User already exists',
+        details: existingUser.email === email ? 'Email already registered' : 'Username already taken'
+      });
+    }
+
+    // Hash password
+    const saltRounds = 12;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
+    // Create user
+    const user = new User({
+      email,
+      username,
+      passwordHash,
+      activeLanguage
+    });
     await user.save();
 
-    const token = generateToken(user._id);
+    // Generate token
+    const token = generateToken(user.id);
 
     res.status(201).json({
+      message: 'User registered successfully',
       token,
       user: {
-        id: user._id,
+        id: user.id,
         email: user.email,
         username: user.username,
         activeLanguage: user.activeLanguage
@@ -59,43 +51,35 @@ router.post('/register', [
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ error: 'Failed to register user' });
   }
 });
 
-// @route   POST /api/auth/login
-// @desc    Login user
-// @access  Public
-router.post('/login', [
-  body('email').isEmail().normalizeEmail(),
-  body('password').exists()
-], async (req, res) => {
+// Login user
+router.post('/login', validateRequest(schemas.login), async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { email, password } = req.body;
 
-    // Check if user exists
-    const user = await User.findOne({ email });
+    // Find user
+    const user = await User.findOne({ email, isActive: true });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Check password
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = generateToken(user._id);
+    // Generate token
+    const token = generateToken(user.id);
 
     res.json({
+      message: 'Login successful',
       token,
       user: {
-        id: user._id,
+        id: user.id,
         email: user.email,
         username: user.username,
         activeLanguage: user.activeLanguage
@@ -103,27 +87,7 @@ router.post('/login', [
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// @route   GET /api/auth/profile
-// @desc    Get user profile
-// @access  Private
-router.get('/profile', auth, async (req, res) => {
-  try {
-    res.json({
-      user: {
-        id: req.user._id,
-        email: req.user.email,
-        username: req.user.username,
-        activeLanguage: req.user.activeLanguage,
-        createdAt: req.user.createdAt
-      }
-    });
-  } catch (error) {
-    console.error('Profile error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ error: 'Failed to login' });
   }
 });
 

@@ -1,106 +1,146 @@
 const express = require('express');
-const Lesson = require('../models/Lesson');
-const UserLessonProgress = require('../models/UserLessonProgress');
-const auth = require('../middleware/auth');
+const { Lesson, UserLessonProgress } = require('../models');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-// @route   GET /api/lessons
-// @desc    Get lessons for user's active language
-// @access  Private
-router.get('/', auth, async (req, res) => {
+// Get all lessons for user's active language
+router.get('/', authenticateToken, async (req, res) => {
   try {
-    const lessons = await Lesson.find({ language: req.user.activeLanguage })
-      .sort({ level: 1 });
+    const { activeLanguage } = req.user;
+    
+    const lessons = await Lesson.find({
+      language: activeLanguage,
+      isActive: true
+    }).sort({ level: 1 });
 
-    // Get user progress for each lesson
-    const progressPromises = lessons.map(async (lesson) => {
-      const progress = await UserLessonProgress.findOne({
-        userId: req.user._id,
-        lessonId: lesson._id
-      });
+    // Get user progress for these lessons
+    const lessonIds = lessons.map(lesson => lesson._id);
+    const progressRecords = await UserLessonProgress.find({
+      userId: req.user.id,
+      lessonId: { $in: lessonIds }
+    });
+
+    // Create a map for quick lookup
+    const progressMap = {};
+    progressRecords.forEach(progress => {
+      progressMap[progress.lessonId.toString()] = progress;
+    });
+
+    const lessonsWithProgress = lessons.map(lesson => {
+      const progress = progressMap[lesson._id.toString()];
       return {
-        ...lesson.toObject(),
-        progress: progress || {
-          completed: false,
-          score: 0,
-          timeSpent: 0
-        }
+        id: lesson.id,
+        title: lesson.title,
+        level: lesson.level,
+        language: lesson.language,
+        completed: progress?.completed || false,
+        score: progress?.score || null,
+        lastViewedAt: progress?.lastViewedAt || null
       };
     });
 
-    const lessonsWithProgress = await Promise.all(progressPromises);
-
-    res.json(lessonsWithProgress);
+    res.json({
+      lessons: lessonsWithProgress,
+      total: lessons.length
+    });
   } catch (error) {
-    console.error('Get lessons error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching lessons:', error);
+    res.status(500).json({ error: 'Failed to fetch lessons' });
   }
 });
 
-// @route   GET /api/lessons/:id
-// @desc    Get specific lesson
-// @access  Private
-router.get('/:id', auth, async (req, res) => {
+// Get specific lesson details
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
-    const lesson = await Lesson.findById(req.params.id);
-    
+    const { id } = req.params;
+    const { activeLanguage } = req.user;
+
+    const lesson = await Lesson.findOne({
+      _id: id,
+      language: activeLanguage,
+      isActive: true
+    });
+
     if (!lesson) {
-      return res.status(404).json({ message: 'Lesson not found' });
+      return res.status(404).json({ error: 'Lesson not found' });
     }
 
-    // Check if lesson is for user's active language
-    if (lesson.language !== req.user.activeLanguage) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-
-    // Get user progress
+    // Get user progress for this lesson
     const progress = await UserLessonProgress.findOne({
-      userId: req.user._id,
-      lessonId: lesson._id
+      userId: req.user.id,
+      lessonId: id
     });
 
     res.json({
-      ...lesson.toObject(),
-      progress: progress || {
-        completed: false,
-        score: 0,
-        timeSpent: 0
+      id: lesson.id,
+      title: lesson.title,
+      level: lesson.level,
+      language: lesson.language,
+      dialogue: lesson.dialogue,
+      grammarTips: lesson.grammarTips,
+      vocabulary: lesson.vocabulary,
+      progress: {
+        completed: progress?.completed || false,
+        score: progress?.score || null,
+        timeSpent: progress?.timeSpent || null,
+        lastViewedAt: progress?.lastViewedAt || null
       }
     });
   } catch (error) {
-    console.error('Get lesson error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching lesson:', error);
+    res.status(500).json({ error: 'Failed to fetch lesson' });
   }
 });
 
-// @route   POST /api/lessons/:id/progress
-// @desc    Update lesson progress
-// @access  Private
-router.post('/:id/progress', auth, async (req, res) => {
+// Update lesson progress
+router.post('/:id/progress', authenticateToken, async (req, res) => {
   try {
+    const { id } = req.params;
     const { completed, score, timeSpent } = req.body;
+    const userId = req.user.id;
 
-    const lesson = await Lesson.findById(req.params.id);
-    if (!lesson || lesson.language !== req.user.activeLanguage) {
-      return res.status(404).json({ message: 'Lesson not found' });
+    // Verify lesson exists and belongs to user's active language
+    const lesson = await Lesson.findOne({
+      _id: id,
+      language: req.user.activeLanguage,
+      isActive: true
+    });
+
+    if (!lesson) {
+      return res.status(404).json({ error: 'Lesson not found' });
     }
 
+    // Update or create progress using findOneAndUpdate with upsert
     const progress = await UserLessonProgress.findOneAndUpdate(
-      { userId: req.user._id, lessonId: req.params.id },
+      { userId, lessonId: id },
       {
+        userId,
+        lessonId: id,
         completed: completed || false,
-        score: score || 0,
-        timeSpent: timeSpent || 0,
+        score: score || null,
+        timeSpent: timeSpent || null,
         lastViewedAt: new Date()
       },
-      { upsert: true, new: true }
+      { 
+        upsert: true, 
+        new: true,
+        runValidators: true
+      }
     );
 
-    res.json(progress);
+    res.json({
+      message: 'Progress updated',
+      progress: {
+        completed: progress.completed,
+        score: progress.score,
+        timeSpent: progress.timeSpent,
+        lastViewedAt: progress.lastViewedAt
+      }
+    });
   } catch (error) {
-    console.error('Update progress error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error updating lesson progress:', error);
+    res.status(500).json({ error: 'Failed to update lesson progress' });
   }
 });
 

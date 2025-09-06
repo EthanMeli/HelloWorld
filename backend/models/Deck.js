@@ -10,27 +10,35 @@ const deckSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+    minlength: 1,
     maxlength: 100
+  },
+  description: {
+    type: String,
+    trim: true
   },
   language: {
     type: String,
     enum: ['fr', 'de'],
     required: true
   },
-  description: {
-    type: String,
-    trim: true,
-    maxlength: 500
-  },
-  isPublic: {
+  isActive: {
     type: Boolean,
-    default: false
+    default: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    transform: function(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
 });
 
-// Index for efficient querying by user and language
 deckSchema.index({ userId: 1, language: 1 });
+deckSchema.index({ userId: 1, isActive: 1 });
 
 module.exports = mongoose.model('Deck', deckSchema);

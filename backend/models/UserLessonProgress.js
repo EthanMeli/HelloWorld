@@ -15,25 +15,31 @@ const userLessonProgressSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  lastViewedAt: {
-    type: Date,
-    default: Date.now
-  },
   score: {
     type: Number,
     min: 0,
-    max: 100,
-    default: 0
+    max: 100
   },
   timeSpent: {
-    type: Number, // in minutes
-    default: 0
+    type: Number, // Time spent in seconds
+    min: 0
+  },
+  lastViewedAt: {
+    type: Date
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    transform: function(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
 });
 
-// Ensure one progress record per user per lesson
 userLessonProgressSchema.index({ userId: 1, lessonId: 1 }, { unique: true });
+userLessonProgressSchema.index({ userId: 1, completed: 1 });
 
 module.exports = mongoose.model('UserLessonProgress', userLessonProgressSchema);

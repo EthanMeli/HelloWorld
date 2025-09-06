@@ -1,82 +1,109 @@
 const express = require('express');
-const MediaItem = require('../models/MediaItem');
-const auth = require('../middleware/auth');
+const { MediaItem } = require('../models');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-// @route   GET /api/media
-// @desc    Get media items for user's active language
-// @access  Private
-router.get('/', auth, async (req, res) => {
+// Get all media items by category
+router.get('/:category', authenticateToken, async (req, res) => {
   try {
-    const { category, difficulty } = req.query;
-    
-    let query = { language: req.user.activeLanguage };
-    
-    if (category) {
-      query.category = category;
-    }
-    
-    if (difficulty) {
-      query.difficulty = difficulty;
+    const { category } = req.params;
+    const { activeLanguage } = req.user;
+
+    const validCategories = ['podcast', 'literature', 'song', 'video'];
+    if (!validCategories.includes(category)) {
+      return res.status(400).json({ error: 'Invalid category' });
     }
 
-    const mediaItems = await MediaItem.find(query)
-      .sort({ createdAt: -1 });
+    const mediaItems = await MediaItem.findAll({
+      where: {
+        language: activeLanguage,
+        category,
+        isActive: true
+      },
+      order: [['createdAt', 'DESC']],
+      attributes: [
+        'id', 'title', 'description', 'sourceUrl', 
+        'duration', 'difficulty', 'thumbnailUrl', 'createdAt'
+      ]
+    });
 
-    res.json(mediaItems);
+    res.json({
+      category,
+      language: activeLanguage,
+      items: mediaItems,
+      total: mediaItems.length
+    });
   } catch (error) {
-    console.error('Get media error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching media items:', error);
+    res.status(500).json({ error: 'Failed to fetch media items' });
   }
 });
 
-// @route   GET /api/media/categories
-// @desc    Get available categories for user's active language
-// @access  Private
-router.get('/categories', auth, async (req, res) => {
+// Get specific media item with transcript/lyrics
+router.get('/:category/:id', authenticateToken, async (req, res) => {
   try {
-    const categories = await MediaItem.distinct('category', { 
-      language: req.user.activeLanguage 
+    const { category, id } = req.params;
+    const { activeLanguage } = req.user;
+
+    const mediaItem = await MediaItem.findOne({
+      where: {
+        id,
+        language: activeLanguage,
+        category,
+        isActive: true
+      }
     });
-    
-    const categoryCounts = await Promise.all(
+
+    if (!mediaItem) {
+      return res.status(404).json({ error: 'Media item not found' });
+    }
+
+    res.json({
+      id: mediaItem.id,
+      title: mediaItem.title,
+      description: mediaItem.description,
+      sourceUrl: mediaItem.sourceUrl,
+      transcriptOrLyrics: mediaItem.transcriptOrLyrics,
+      duration: mediaItem.duration,
+      difficulty: mediaItem.difficulty,
+      thumbnailUrl: mediaItem.thumbnailUrl,
+      category: mediaItem.category,
+      language: mediaItem.language
+    });
+  } catch (error) {
+    console.error('Error fetching media item:', error);
+    res.status(500).json({ error: 'Failed to fetch media item' });
+  }
+});
+
+// Get all categories with counts
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const { activeLanguage } = req.user;
+
+    const categories = ['podcast', 'literature', 'song', 'video'];
+    const categoryStats = await Promise.all(
       categories.map(async (category) => {
-        const count = await MediaItem.countDocuments({
-          language: req.user.activeLanguage,
-          category
+        const count = await MediaItem.count({
+          where: {
+            language: activeLanguage,
+            category,
+            isActive: true
+          }
         });
         return { category, count };
       })
     );
 
-    res.json(categoryCounts);
+    res.json({
+      language: activeLanguage,
+      categories: categoryStats,
+      totalItems: categoryStats.reduce((sum, cat) => sum + cat.count, 0)
+    });
   } catch (error) {
-    console.error('Get categories error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// @route   GET /api/media/:id
-// @desc    Get specific media item
-// @access  Private
-router.get('/:id', auth, async (req, res) => {
-  try {
-    const mediaItem = await MediaItem.findById(req.params.id);
-    
-    if (!mediaItem) {
-      return res.status(404).json({ message: 'Media item not found' });
-    }
-
-    // Check if media item is for user's active language
-    if (mediaItem.language !== req.user.activeLanguage) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-
-    res.json(mediaItem);
-  } catch (error) {
-    console.error('Get media item error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching media categories:', error);
+    res.status(500).json({ error: 'Failed to fetch media categories' });
   }
 });
 

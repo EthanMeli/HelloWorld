@@ -1,235 +1,341 @@
 const express = require('express');
-const { body, validationResult } = require('express-validator');
-const Deck = require('../models/Deck');
-const Card = require('../models/Card');
-const ReviewLog = require('../models/ReviewLog');
-const auth = require('../middleware/auth');
+const { Deck, Card, ReviewLog } = require('../models');
+const { authenticateToken } = require('../middleware/auth');
+const { validateRequest, schemas } = require('../middleware/validation');
 
 const router = express.Router();
 
-// @route   GET /api/decks
-// @desc    Get user's decks
-// @access  Private
-router.get('/decks', auth, async (req, res) => {
+// Get all decks for user
+router.get('/decks', authenticateToken, async (req, res) => {
   try {
-    const decks = await Deck.find({ userId: req.user._id })
-      .sort({ createdAt: -1 });
+    const decks = await Deck.find({
+      userId: req.user.id,
+      isActive: true
+    }).sort({ createdAt: -1 });
 
-    // Get card count for each deck
-    const decksWithCardCount = await Promise.all(
+    const decksWithStats = await Promise.all(
       decks.map(async (deck) => {
-        const cardCount = await Card.countDocuments({ deckId: deck._id });
+        const cardCount = await Card.countDocuments({
+          deckId: deck._id,
+          isActive: true
+        });
+
         return {
-          ...deck.toObject(),
-          cardCount
+          id: deck.id,
+          name: deck.name,
+          description: deck.description,
+          language: deck.language,
+          cardCount,
+          createdAt: deck.createdAt
         };
       })
     );
 
-    res.json(decksWithCardCount);
+    res.json({ decks: decksWithStats });
   } catch (error) {
-    console.error('Get decks error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching decks:', error);
+    res.status(500).json({ error: 'Failed to fetch decks' });
   }
 });
 
-// @route   POST /api/decks
-// @desc    Create new deck
-// @access  Private
-router.post('/decks', [
-  body('name').trim().isLength({ min: 1, max: 100 }),
-  body('description').optional().trim().isLength({ max: 500 })
-], auth, async (req, res) => {
+// Create new deck
+router.post('/decks', authenticateToken, validateRequest(schemas.createDeck), async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { name, description } = req.body;
+    const { name, description, language } = req.body;
 
     const deck = new Deck({
-      userId: req.user._id,
+      userId: req.user.id,
       name,
       description,
-      language: req.user.activeLanguage
+      language
+    });
+    await deck.save();
+
+    res.status(201).json({
+      message: 'Deck created successfully',
+      deck: {
+        id: deck.id,
+        name: deck.name,
+        description: deck.description,
+        language: deck.language,
+        cardCount: 0
+      }
+    });
+  } catch (error) {
+    console.error('Error creating deck:', error);
+    res.status(500).json({ error: 'Failed to create deck' });
+  }
+});
+
+// Get cards in a deck
+router.get('/decks/:deckId/cards', authenticateToken, async (req, res) => {
+  try {
+    const { deckId } = req.params;
+
+    // Verify deck ownership
+    const deck = await Deck.findOne({
+      where: {
+        id: deckId,
+        userId: req.user.id,
+        isActive: true
+      }
     });
 
-    await deck.save();
-    res.status(201).json(deck);
+    if (!deck) {
+      return res.status(404).json({ error: 'Deck not found' });
+    }
+
+    const cards = await Card.findAll({
+      where: {
+        deckId,
+        isActive: true
+      },
+      include: [{
+        model: ReviewLog,
+        as: 'reviews',
+        where: { userId: req.user.id },
+        required: false
+      }],
+      order: [['createdAt', 'ASC']]
+    });
+
+    const cardsWithProgress = cards.map(card => {
+      const review = card.reviews?.[0];
+      return {
+        id: card.id,
+        front: card.front,
+        back: card.back,
+        hint: card.hint,
+        difficulty: card.difficulty,
+        reviewStats: review ? {
+          lastReviewed: review.lastReviewedAt,
+          dueAt: review.dueAt,
+          easeFactor: review.easeFactor,
+          intervalDays: review.intervalDays,
+          repetitions: review.repetitions
+        } : null
+      };
+    });
+
+    res.json({
+      deck: {
+        id: deck.id,
+        name: deck.name,
+        description: deck.description,
+        language: deck.language
+      },
+      cards: cardsWithProgress
+    });
   } catch (error) {
-    console.error('Create deck error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching cards:', error);
+    res.status(500).json({ error: 'Failed to fetch cards' });
   }
 });
 
-// @route   GET /api/decks/:id/cards
-// @desc    Get cards in a deck
-// @access  Private
-router.get('/decks/:id/cards', auth, async (req, res) => {
+// Add card to deck
+router.post('/decks/:deckId/cards', authenticateToken, validateRequest(schemas.createCard), async (req, res) => {
   try {
-    const deck = await Deck.findOne({ _id: req.params.id, userId: req.user._id });
+    const { deckId } = req.params;
+    const { front, back, hint, difficulty } = req.body;
+
+    // Verify deck ownership
+    const deck = await Deck.findOne({
+      where: {
+        id: deckId,
+        userId: req.user.id,
+        isActive: true
+      }
+    });
+
     if (!deck) {
-      return res.status(404).json({ message: 'Deck not found' });
+      return res.status(404).json({ error: 'Deck not found' });
     }
 
-    const cards = await Card.find({ deckId: req.params.id });
-    res.json(cards);
-  } catch (error) {
-    console.error('Get cards error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// @route   POST /api/decks/:id/cards
-// @desc    Add card to deck
-// @access  Private
-router.post('/decks/:id/cards', [
-  body('front').trim().isLength({ min: 1 }),
-  body('back').trim().isLength({ min: 1 }),
-  body('hint').optional().trim()
-], auth, async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const deck = await Deck.findOne({ _id: req.params.id, userId: req.user._id });
-    if (!deck) {
-      return res.status(404).json({ message: 'Deck not found' });
-    }
-
-    const { front, back, hint, audioUrl, imageUrl } = req.body;
-
-    const card = new Card({
-      deckId: req.params.id,
+    const card = await Card.create({
+      deckId,
       front,
       back,
       hint,
-      audioUrl,
-      imageUrl
+      difficulty: difficulty || 1
     });
 
-    await card.save();
-    res.status(201).json(card);
-  } catch (error) {
-    console.error('Create card error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// @route   GET /api/reviews
-// @desc    Get cards due for review
-// @access  Private
-router.get('/reviews', auth, async (req, res) => {
-  try {
-    // Get user's decks
-    const decks = await Deck.find({ userId: req.user._id });
-    const deckIds = decks.map(deck => deck._id);
-
-    // Get cards from user's decks that are due for review
-    const cards = await Card.find({ deckId: { $in: deckIds } });
-    const cardIds = cards.map(card => card._id);
-
-    // Get review logs for these cards
-    const reviewLogs = await ReviewLog.find({
-      userId: req.user._id,
-      cardId: { $in: cardIds },
-      dueAt: { $lte: new Date() }
-    }).populate('cardId');
-
-    // If no cards are due, get new cards (cards without review logs)
-    if (reviewLogs.length === 0) {
-      const reviewedCardIds = await ReviewLog.distinct('cardId', { userId: req.user._id });
-      const newCards = await Card.find({
-        deckId: { $in: deckIds },
-        _id: { $nin: reviewedCardIds }
-      }).limit(10);
-
-      return res.json(newCards);
-    }
-
-    res.json(reviewLogs.map(log => log.cardId));
-  } catch (error) {
-    console.error('Get reviews error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// @route   POST /api/reviews
-// @desc    Submit review result
-// @access  Private
-router.post('/reviews', [
-  body('cardId').isMongoId(),
-  body('rating').isInt({ min: 1, max: 5 })
-], auth, async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { cardId, rating } = req.body;
-
-    // Check if card belongs to user
-    const card = await Card.findById(cardId);
-    if (!card) {
-      return res.status(404).json({ message: 'Card not found' });
-    }
-
-    const deck = await Deck.findOne({ _id: card.deckId, userId: req.user._id });
-    if (!deck) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-
-    // Get or create review log
-    let reviewLog = await ReviewLog.findOne({ userId: req.user._id, cardId });
-
-    if (!reviewLog) {
-      reviewLog = new ReviewLog({
-        userId: req.user._id,
-        cardId,
-        rating,
-        easeFactor: 2.5,
-        intervalDays: 1,
-        repetitions: 0
-      });
-    } else {
-      reviewLog.rating = rating;
-      reviewLog.lastReviewedAt = new Date();
-    }
-
-    // Update spaced repetition parameters based on rating
-    if (rating >= 3) {
-      // Good or better
-      reviewLog.repetitions += 1;
-      
-      if (reviewLog.repetitions === 1) {
-        reviewLog.intervalDays = 1;
-      } else if (reviewLog.repetitions === 2) {
-        reviewLog.intervalDays = 6;
-      } else {
-        reviewLog.intervalDays = Math.round(reviewLog.intervalDays * reviewLog.easeFactor);
+    res.status(201).json({
+      message: 'Card created successfully',
+      card: {
+        id: card.id,
+        front: card.front,
+        back: card.back,
+        hint: card.hint,
+        difficulty: card.difficulty
       }
+    });
+  } catch (error) {
+    console.error('Error creating card:', error);
+    res.status(500).json({ error: 'Failed to create card' });
+  }
+});
 
-      // Adjust ease factor
-      reviewLog.easeFactor = Math.max(1.3, reviewLog.easeFactor + (0.1 - (5 - rating) * (0.08 + (5 - rating) * 0.02)));
-    } else {
-      // Again or Hard
-      reviewLog.repetitions = 0;
-      reviewLog.intervalDays = 1;
-      reviewLog.easeFactor = Math.max(1.3, reviewLog.easeFactor - 0.2);
+// Get cards due for review
+router.get('/review', authenticateToken, async (req, res) => {
+  try {
+    const { limit = 20 } = req.query;
+    const now = new Date();
+
+    // Get cards due for review
+    const dueCards = await Card.findAll({
+      include: [
+        {
+          model: Deck,
+          as: 'deck',
+          where: {
+            userId: req.user.id,
+            language: req.user.activeLanguage,
+            isActive: true
+          }
+        },
+        {
+          model: ReviewLog,
+          as: 'reviews',
+          where: {
+            userId: req.user.id,
+            dueAt: { [Op.lte]: now }
+          },
+          required: false
+        }
+      ],
+      where: { isActive: true },
+      order: [['reviews', 'dueAt', 'ASC']],
+      limit: parseInt(limit)
+    });
+
+    // Include new cards (never reviewed)
+    const newCards = await Card.findAll({
+      include: [
+        {
+          model: Deck,
+          as: 'deck',
+          where: {
+            userId: req.user.id,
+            language: req.user.activeLanguage,
+            isActive: true
+          }
+        }
+      ],
+      where: {
+        isActive: true,
+        '$reviews.id$': null
+      },
+      include: [{
+        model: ReviewLog,
+        as: 'reviews',
+        where: { userId: req.user.id },
+        required: false
+      }],
+      limit: Math.max(0, parseInt(limit) - dueCards.length)
+    });
+
+    const allCards = [...dueCards, ...newCards].map(card => ({
+      id: card.id,
+      front: card.front,
+      back: card.back,
+      hint: card.hint,
+      difficulty: card.difficulty,
+      deckName: card.deck.name,
+      isNew: !card.reviews || card.reviews.length === 0
+    }));
+
+    res.json({
+      cards: allCards,
+      totalDue: allCards.length
+    });
+  } catch (error) {
+    console.error('Error fetching review cards:', error);
+    res.status(500).json({ error: 'Failed to fetch review cards' });
+  }
+});
+
+// Submit card review (Spaced Repetition)
+router.post('/review/:cardId', authenticateToken, validateRequest(schemas.reviewCard), async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    const { rating } = req.body;
+    const userId = req.user.id;
+
+    // Verify card exists and user has access
+    const card = await Card.findOne({
+      include: [{
+        model: Deck,
+        as: 'deck',
+        where: {
+          userId,
+          isActive: true
+        }
+      }],
+      where: {
+        id: cardId,
+        isActive: true
+      }
+    });
+
+    if (!card) {
+      return res.status(404).json({ error: 'Card not found' });
     }
+
+    // Get existing review or create default values
+    let existingReview = await ReviewLog.findOne({
+      where: { cardId, userId }
+    });
+
+    let easeFactor = existingReview?.easeFactor || 2.5;
+    let intervalDays = existingReview?.intervalDays || 1;
+    let repetitions = existingReview?.repetitions || 0;
+
+    // SM2 Algorithm implementation
+    if (rating >= 3) {
+      // Correct response
+      if (repetitions === 0) {
+        intervalDays = 1;
+      } else if (repetitions === 1) {
+        intervalDays = 6;
+      } else {
+        intervalDays = Math.round(intervalDays * easeFactor);
+      }
+      repetitions++;
+    } else {
+      // Incorrect response
+      repetitions = 0;
+      intervalDays = 1;
+    }
+
+    // Update ease factor
+    easeFactor = easeFactor + (0.1 - (5 - rating) * (0.08 + (5 - rating) * 0.02));
+    easeFactor = Math.max(1.3, easeFactor);
 
     // Calculate next due date
-    reviewLog.dueAt = new Date(Date.now() + reviewLog.intervalDays * 24 * 60 * 60 * 1000);
+    const dueAt = new Date();
+    dueAt.setDate(dueAt.getDate() + intervalDays);
 
-    await reviewLog.save();
-    res.json(reviewLog);
+    // Update or create review log
+    await ReviewLog.upsert({
+      cardId,
+      userId,
+      lastReviewedAt: new Date(),
+      easeFactor,
+      intervalDays,
+      repetitions,
+      dueAt,
+      rating
+    });
+
+    res.json({
+      message: 'Review recorded successfully',
+      nextReview: dueAt,
+      intervalDays,
+      easeFactor: Math.round(easeFactor * 100) / 100
+    });
   } catch (error) {
-    console.error('Submit review error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error recording review:', error);
+    res.status(500).json({ error: 'Failed to record review' });
   }
 });
 

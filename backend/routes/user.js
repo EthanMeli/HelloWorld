@@ -1,124 +1,140 @@
 const express = require('express');
-const { body, validationResult } = require('express-validator');
-const User = require('../models/User');
-const UserLessonProgress = require('../models/UserLessonProgress');
-const Deck = require('../models/Deck');
-const ReviewLog = require('../models/ReviewLog');
-const auth = require('../middleware/auth');
+const { User, Deck, UserLessonProgress } = require('../models');
+const { authenticateToken } = require('../middleware/auth');
+const { validateRequest, schemas } = require('../middleware/validation');
 
 const router = express.Router();
 
-// @route   GET /api/user/stats
-// @desc    Get user statistics
-// @access  Private
-router.get('/stats', auth, async (req, res) => {
+// Get user profile
+router.get('/profile', authenticateToken, async (req, res) => {
   try {
-    // Get lesson progress stats
-    const totalLessons = await UserLessonProgress.countDocuments({ userId: req.user._id });
-    const completedLessons = await UserLessonProgress.countDocuments({ 
-      userId: req.user._id, 
-      completed: true 
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'email', 'username', 'activeLanguage', 'createdAt']
     });
 
-    // Get flashcard stats
-    const totalDecks = await Deck.countDocuments({ userId: req.user._id });
-    const totalCards = await ReviewLog.countDocuments({ userId: req.user._id });
-    const cardsReviewed = await ReviewLog.countDocuments({ 
-      userId: req.user._id,
-      repetitions: { $gt: 0 }
-    });
-
-    // Get streak (consecutive days with reviews)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const reviewsToday = await ReviewLog.countDocuments({
-      userId: req.user._id,
-      lastReviewedAt: { $gte: today }
-    });
-
-    res.json({
-      lessons: {
-        total: totalLessons,
-        completed: completedLessons,
-        progress: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
-      },
-      flashcards: {
-        totalDecks,
-        totalCards,
-        cardsReviewed,
-        progress: totalCards > 0 ? Math.round((cardsReviewed / totalCards) * 100) : 0
-      },
-      streak: reviewsToday > 0 ? 1 : 0 // Simplified streak calculation
-    });
-  } catch (error) {
-    console.error('Get stats error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// @route   PATCH /api/user/preferences
-// @desc    Update user preferences (including language)
-// @access  Private
-router.patch('/preferences', [
-  body('activeLanguage').optional().isIn(['fr', 'de']),
-  body('username').optional().trim().isLength({ min: 1, max: 50 })
-], auth, async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    const { activeLanguage, username } = req.body;
-    const updateData = {};
+    // Get user statistics
+    const deckCount = await Deck.count({
+      where: { userId: user.id, isActive: true }
+    });
 
-    if (activeLanguage) {
-      updateData.activeLanguage = activeLanguage;
-    }
+    const completedLessons = await UserLessonProgress.count({
+      where: { userId: user.id, completed: true }
+    });
 
-    if (username) {
-      updateData.username = username;
-    }
-
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      updateData,
-      { new: true, select: '-password' }
-    );
+    const totalLessons = await UserLessonProgress.count({
+      where: { userId: user.id }
+    });
 
     res.json({
       user: {
-        id: user._id,
+        id: user.id,
         email: user.email,
         username: user.username,
         activeLanguage: user.activeLanguage,
-        updatedAt: user.updatedAt
+        memberSince: user.createdAt
+      },
+      stats: {
+        deckCount,
+        completedLessons,
+        totalLessons,
+        progressPercentage: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
       }
     });
   } catch (error) {
-    console.error('Update preferences error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ error: 'Failed to fetch user profile' });
   }
 });
 
-// @route   DELETE /api/user/account
-// @desc    Delete user account
-// @access  Private
-router.delete('/account', auth, async (req, res) => {
+// Update user profile
+router.patch('/profile', authenticateToken, validateRequest(schemas.updateProfile), async (req, res) => {
   try {
-    // Delete all user data
-    await Promise.all([
-      UserLessonProgress.deleteMany({ userId: req.user._id }),
-      Deck.deleteMany({ userId: req.user._id }),
-      ReviewLog.deleteMany({ userId: req.user._id }),
-      User.findByIdAndDelete(req.user._id)
-    ]);
+    const { username, activeLanguage } = req.body;
+    const userId = req.user.id;
 
-    res.json({ message: 'Account deleted successfully' });
+    const updateData = {};
+    if (username) updateData.username = username;
+    if (activeLanguage) updateData.activeLanguage = activeLanguage;
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: 'No valid fields to update' });
+    }
+
+    // Check if username is already taken (if updating username)
+    if (username) {
+      const existingUser = await User.findOne({
+        where: { username, id: { $ne: userId } }
+      });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Username already taken' });
+      }
+    }
+
+    await User.update(updateData, {
+      where: { id: userId }
+    });
+
+    const updatedUser = await User.findByPk(userId, {
+      attributes: ['id', 'email', 'username', 'activeLanguage']
+    });
+
+    res.json({
+      message: 'Profile updated successfully',
+      user: updatedUser
+    });
   } catch (error) {
-    console.error('Delete account error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ error: 'Failed to update user profile' });
+  }
+});
+
+// Get user dashboard stats
+router.get('/dashboard', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { activeLanguage } = req.user;
+
+    // Get lesson progress
+    const lessonStats = await UserLessonProgress.findAll({
+      where: { userId },
+      attributes: ['completed', 'score', 'lastViewedAt'],
+      order: [['lastViewedAt', 'DESC']],
+      limit: 5
+    });
+
+    const completedLessons = lessonStats.filter(stat => stat.completed).length;
+    const averageScore = lessonStats.length > 0 
+      ? Math.round(lessonStats.reduce((sum, stat) => sum + (stat.score || 0), 0) / lessonStats.length)
+      : 0;
+
+    // Get deck stats
+    const deckStats = await Deck.findAll({
+      where: { userId, language: activeLanguage, isActive: true },
+      attributes: ['id', 'name', 'createdAt'],
+      order: [['createdAt', 'DESC']],
+      limit: 3
+    });
+
+    res.json({
+      language: activeLanguage,
+      lessonProgress: {
+        completed: completedLessons,
+        total: lessonStats.length,
+        averageScore,
+        recentActivity: lessonStats.slice(0, 3)
+      },
+      flashcards: {
+        deckCount: deckStats.length,
+        recentDecks: deckStats
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    res.status(500).json({ error: 'Failed to fetch dashboard stats' });
   }
 });
 

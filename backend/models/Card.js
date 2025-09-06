@@ -8,29 +8,37 @@ const cardSchema = new mongoose.Schema({
   },
   front: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   back: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   hint: {
-    type: String,
-    trim: true
-  },
-  audioUrl: {
     type: String
   },
-  imageUrl: {
-    type: String
+  difficulty: {
+    type: Number,
+    default: 1,
+    min: 1,
+    max: 5
+  },
+  isActive: {
+    type: Boolean,
+    default: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    transform: function(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
 });
 
-// Index for efficient querying by deck
-cardSchema.index({ deckId: 1 });
+cardSchema.index({ deckId: 1, isActive: 1 });
 
 module.exports = mongoose.model('Card', cardSchema);

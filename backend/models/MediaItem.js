@@ -13,42 +13,62 @@ const mediaItemSchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   description: {
-    type: String,
-    required: true,
-    trim: true
+    type: String
   },
   sourceUrl: {
     type: String,
-    required: true
+    validate: {
+      validator: function(v) {
+        return !v || /^https?:\/\/.+/.test(v);
+      },
+      message: 'Invalid URL format'
+    }
   },
   transcriptOrLyrics: {
     type: String
   },
   duration: {
-    type: Number, // in minutes
-    default: 0
+    type: Number,
+    min: 0,
+    comment: 'Duration in seconds'
   },
   difficulty: {
-    type: String,
-    enum: ['beginner', 'intermediate', 'advanced'],
-    default: 'beginner'
+    type: Number,
+    default: 1,
+    min: 1,
+    max: 5,
+    required: true
   },
   thumbnailUrl: {
-    type: String
-  },
-  tags: [{
     type: String,
-    trim: true
-  }]
+    validate: {
+      validator: function(v) {
+        return !v || /^https?:\/\/.+/.test(v);
+      },
+      message: 'Invalid URL format'
+    }
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    transform: function(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
 });
 
-// Index for efficient querying by language and category
 mediaItemSchema.index({ language: 1, category: 1 });
+mediaItemSchema.index({ language: 1, isActive: 1 });
+mediaItemSchema.index({ category: 1, isActive: 1 });
 
 module.exports = mongoose.model('MediaItem', mediaItemSchema);

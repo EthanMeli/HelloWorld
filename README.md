@@ -1,226 +1,242 @@
-# HelloWorld - Language Learning App MVP
+# HelloWorld Language Learning App - MVP
 
-A mobile language learning application built with React Native (frontend) and Node.js/Express (backend) to help English speakers learn French or German.
+A React Native mobile application for learning French and German, featuring progressive lessons, spaced repetition flashcards, and immersive media content.
 
-## Features
-
-- **Progressive Lessons**: 10 lessons per language with dialogues, grammar tips, and exercises
-- **Flashcard System**: Create decks and review cards with spaced repetition algorithm
-- **Media Library**: Immersive content including podcasts, literature, songs, and videos
-- **User Profiles**: Language selection, progress tracking, and statistics
-- **Cross-platform**: Works on both iOS and Android
-
-## Tech Stack
-
-### Backend
-- Node.js with Express
-- MongoDB with Mongoose
-- JWT Authentication
-- RESTful API
-
-### Frontend
-- React Native with Expo
-- React Navigation
-- React Native Paper (Material Design)
-- Context API for state management
-
-## Project Structure
+## 🏗️ Project Structure
 
 ```
 HelloWorld/
-├── backend/                 # Node.js/Express backend
-│   ├── config/             # Database configuration
-│   ├── middleware/         # Authentication middleware
-│   ├── models/            # MongoDB models
-│   ├── routes/            # API routes
-│   ├── scripts/           # Database seeding scripts
-│   └── server.js          # Main server file
-├── mobile/                # React Native frontend
+├── backend/                 # Node.js + Express API
+│   ├── models/             # Sequelize database models
+│   ├── routes/             # API routes
+│   ├── middleware/         # Authentication & validation
+│   ├── scripts/            # Database seeding
+│   └── server.js           # Main server file
+├── frontend/               # React Native app
 │   ├── src/
-│   │   ├── components/    # Reusable components
-│   │   ├── context/       # React Context providers
-│   │   ├── navigation/    # Navigation configuration
-│   │   ├── screens/       # App screens
-│   │   ├── services/      # API services
-│   │   └── theme/         # App theme
-│   ├── App.js             # Main app component
-│   └── package.json       # Dependencies
-└── README.md              # This file
+│   │   ├── components/     # Reusable UI components
+│   │   ├── screens/        # App screens
+│   │   ├── navigation/     # Navigation configuration
+│   │   ├── store/          # Redux store & slices
+│   │   ├── services/       # API services
+│   │   └── theme/          # App theme & styling
+│   └── App.js              # Main app entry point
+└── PRD.md                  # Product Requirements Document
 ```
 
-## Getting Started
+## ✨ Features
+
+### Core Features
+- **User Authentication**: Registration, login with JWT tokens
+- **Language Selection**: Choose between French or German
+- **Progressive Lessons**: 10 lessons per language with dialogues and grammar
+- **Spaced Repetition Flashcards**: Create decks, review with SM2 algorithm
+- **Media Content**: Podcasts, literature, songs, and videos
+- **Progress Tracking**: Track lesson completion and flashcard reviews
+
+### Technical Features
+- **Cross-platform**: iOS and Android support
+- **Offline-ready**: Redux Persist for state management
+- **Type-safe**: TypeScript throughout the frontend
+- **Modern UI**: React Native Paper components
+- **RESTful API**: Express.js backend with PostgreSQL
+
+## 🚀 Getting Started
 
 ### Prerequisites
-
 - Node.js (v16 or higher)
-- MongoDB (local or cloud)
-- Expo CLI (`npm install -g expo-cli`)
+- PostgreSQL database
 - React Native development environment
+- iOS Simulator or Android Emulator
 
 ### Backend Setup
 
-1. Navigate to the backend directory:
+1. **Navigate to backend directory**:
    ```bash
    cd backend
    ```
 
-2. Install dependencies:
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
-3. Create a `.env` file in the backend directory:
-   ```env
-   PORT=3000
-   MONGODB_URI=mongodb://localhost:27017/helloworld
-   JWT_SECRET=your-super-secret-jwt-key-here
-   NODE_ENV=development
+3. **Configure environment**:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your database credentials
    ```
 
-4. Start MongoDB (if running locally)
-
-5. Seed the database with sample data:
+4. **Setup database**:
    ```bash
+   # Create PostgreSQL database
+   createdb helloworld_db
+   
+   # Seed with sample data
    npm run seed
    ```
 
-6. Start the development server:
+5. **Start the server**:
    ```bash
    npm run dev
    ```
 
-The backend will be running on `http://localhost:3000`
+Backend will run on `http://localhost:3000`
 
 ### Frontend Setup
 
-1. Navigate to the mobile directory:
+1. **Navigate to frontend directory**:
    ```bash
-   cd mobile
+   cd frontend
    ```
 
-2. Install dependencies:
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
-3. Start the Expo development server:
+3. **iOS Setup** (macOS only):
+   ```bash
+   cd ios && pod install && cd ..
+   ```
+
+4. **Start Metro bundler**:
    ```bash
    npm start
    ```
 
-4. Use the Expo Go app on your phone to scan the QR code, or run on an emulator:
-   - iOS: `npm run ios`
-   - Android: `npm run android`
+5. **Run on device/simulator**:
+   ```bash
+   # iOS
+   npm run ios
+   
+   # Android
+   npm run android
+   ```
 
-## API Endpoints
+## 📱 App Navigation
+
+### Authentication Flow
+- **Welcome Screen**: App introduction with sign-in/register options
+- **Login Screen**: Email/password authentication
+- **Register Screen**: Account creation with language selection
+
+### Main App Tabs
+1. **Lessons**: Browse and complete language lessons
+2. **Flashcards**: Create decks, add cards, and review
+3. **Media**: Explore podcasts, literature, songs, and videos
+4. **Profile**: User settings and progress stats
+
+## 🗄️ Database Schema
+
+### Core Models
+- **Users**: Authentication and language preferences
+- **Lessons**: Structured language content with dialogues
+- **Decks & Cards**: Flashcard system
+- **ReviewLog**: Spaced repetition tracking
+- **MediaItems**: Audio, video, and text content
+- **UserLessonProgress**: Lesson completion tracking
+
+## 🔧 API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/profile` - Get user profile
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
 
 ### Lessons
 - `GET /api/lessons` - Get lessons for user's language
-- `GET /api/lessons/:id` - Get specific lesson
+- `GET /api/lessons/:id` - Get lesson details
 - `POST /api/lessons/:id/progress` - Update lesson progress
 
 ### Flashcards
-- `GET /api/decks` - Get user's decks
-- `POST /api/decks` - Create new deck
-- `GET /api/decks/:id/cards` - Get cards in deck
-- `POST /api/decks/:id/cards` - Add card to deck
-- `GET /api/reviews` - Get cards due for review
-- `POST /api/reviews` - Submit review result
+- `GET /api/flashcards/decks` - Get user's decks
+- `POST /api/flashcards/decks` - Create new deck
+- `GET /api/flashcards/decks/:id/cards` - Get cards in deck
+- `POST /api/flashcards/decks/:id/cards` - Add card to deck
+- `GET /api/flashcards/review` - Get cards due for review
+- `POST /api/flashcards/review/:cardId` - Submit card review
 
 ### Media
-- `GET /api/media` - Get media items
-- `GET /api/media/categories` - Get available categories
-- `GET /api/media/:id` - Get specific media item
+- `GET /api/media` - Get media categories
+- `GET /api/media/:category` - Get media items by category
+- `GET /api/media/:category/:id` - Get media item details
 
 ### User
-- `GET /api/user/stats` - Get user statistics
-- `PATCH /api/user/preferences` - Update user preferences
+- `GET /api/user/profile` - Get user profile
+- `PATCH /api/user/profile` - Update user profile
+- `GET /api/user/dashboard` - Get user dashboard stats
 
-## Sample Data
+## 🎯 MVP Scope
 
-The app includes sample data for:
-- 10 French lessons (basic greetings, numbers, family, etc.)
-- 10 German lessons (basic greetings, numbers, family, etc.)
-- Media content (podcasts, literature, songs, videos) for both languages
+This MVP includes:
+- ✅ User registration/login with language selection
+- ✅ 10 progressive lessons per language (French & German)
+- ✅ Flashcard creation and spaced repetition system
+- ✅ Media content browsing (5+ items per category)
+- ✅ User profiles with language switching
+- ✅ Progress tracking for lessons and flashcards
 
-## Features Implemented
+## 🔮 Future Enhancements
 
-### ✅ Core Features
-- User authentication (register/login)
-- Language selection (French/German)
-- Progressive lesson system
-- Flashcard creation and review
-- Spaced repetition algorithm
-- Media library with categories
-- User profile and statistics
-- Cross-platform mobile app
-
-### 🔄 Future Enhancements
-- AI grammar corrections
+- AI-powered grammar corrections
 - Community features (forums, chat)
-- More languages
+- Additional languages
 - Gamification (badges, leaderboards)
 - Offline mode
 - Voice recognition
 - Advanced analytics
 
-## Development
+## 🛠️ Development Commands
 
-### Backend Development
+### Backend
 ```bash
-cd backend
-npm run dev  # Start with nodemon for auto-restart
+npm run dev          # Start development server
+npm run start        # Start production server
+npm run seed         # Seed database with sample data
+npm test             # Run tests
 ```
 
-### Frontend Development
+### Frontend
 ```bash
-cd mobile
-npm start    # Start Expo development server
+npm start            # Start Metro bundler
+npm run ios          # Run on iOS simulator
+npm run android      # Run on Android emulator
+npm run lint         # Run ESLint
+npm test             # Run tests
 ```
 
-### Database Seeding
-```bash
-cd backend
-node scripts/seedData.js
+## 📝 Environment Variables
+
+### Backend (.env)
+```env
+NODE_ENV=development
+PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=helloworld_db
+DB_USER=postgres
+DB_PASSWORD=your_password
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
+FRONTEND_URL=http://localhost:3000
 ```
 
-## Testing
-
-The MVP includes basic error handling and validation. For production, consider adding:
-- Unit tests for backend API endpoints
-- Integration tests for database operations
-- Frontend component testing
-- End-to-end testing
-
-## Deployment
-
-### Backend Deployment
-- Deploy to Heroku, AWS, or similar platform
-- Set up MongoDB Atlas for production database
-- Configure environment variables
-
-### Frontend Deployment
-- Build for iOS App Store
-- Build for Google Play Store
-- Use Expo Application Services (EAS) for builds
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Run tests
 5. Submit a pull request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License.
 
-## Support
+## 📞 Support
 
-For questions or issues, please create an issue in the repository or contact the development team.
+For questions or support, please open an issue in the repository.
+
+---
+
+**HelloWorld Team** - Learning languages, one lesson at a time! 🌍
