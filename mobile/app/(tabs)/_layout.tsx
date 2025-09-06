@@ -32,7 +32,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (<Ionicons name="person-outline" size={size} color={color} />)
         }}
       />
-      <Tabs.Screen name="lessonNav"
+      <Tabs.Screen name="lessons"
         options={{
           title: "Lessons",
           tabBarIcon: ({ color, size }) => (<Ionicons name="earth-outline" size={size} color={color} />)
