@@ -1,0 +1,12 @@
+{
+  "name": "helloworld",
+  "version": "1.0.0",
+  "description": "A mobile language learning application built with React Native (frontend) and Node.js/Express (backend) to help English speakers learn French or German.",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "setup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
