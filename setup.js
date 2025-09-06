@@ -51,7 +51,7 @@ try {
   
   // Install dependencies
   console.log('Installing mobile dependencies...');
-  execSync('npm install', { stdio: 'inherit' });
+  execSync('npm install --legacy-peer-deps', { stdio: 'inherit' });
   
   console.log('✅ Mobile app setup complete');
 } catch (error) {
@@ -75,5 +75,10 @@ console.log('   cd backend && npm run dev');
 console.log('3. In a new terminal, start the mobile app:');
 console.log('   cd mobile && npm start');
 console.log('4. Use Expo Go app to scan the QR code');
+console.log('\n📱 Expo SDK 53 Features:');
+console.log('- Latest React Native 0.76.3');
+console.log('- Improved performance and stability');
+console.log('- Better TypeScript support');
+console.log('- Enhanced development tools');
 console.log('\n📚 For more information, see the README.md files in each directory.');
 console.log('\nHappy learning! 🌍');

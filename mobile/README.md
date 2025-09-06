@@ -15,12 +15,13 @@ React Native mobile application for the HelloWorld language learning platform.
 
 ## Tech Stack
 
-- React Native with Expo
+- React Native 0.76.3 with Expo SDK 53
 - React Navigation (Stack + Bottom Tabs)
 - React Native Paper (Material Design)
 - Context API for state management
 - Axios for API communication
 - AsyncStorage for local data persistence
+- Expo Router for enhanced navigation
 
 ## App Structure
 
