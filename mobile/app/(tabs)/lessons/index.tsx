@@ -1,7 +1,7 @@
-import { View, FlatList } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import React, { JSX } from 'react'
-import LessonCard from '../../../components/lessons/LessonCard'
+import { View, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { JSX } from 'react';
+import LessonCard from '../../../components/lessons/LessonCard';
 import styles from "../../../assets/styles/lesson.styles";
 import { lessons } from '../../../data/lessons.js'
 import { router } from 'expo-router';

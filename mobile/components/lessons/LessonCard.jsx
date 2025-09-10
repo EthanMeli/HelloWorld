@@ -1,13 +1,13 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
-import styles from '../../assets/styles/lesson.styles'
+import { View, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import styles from '../../assets/styles/lesson.styles';
 
 export default function LessonCard({ lesson, onPress }) {
   return (
     <View style={styles.cardContainer}>
       <View style={styles.lessonInfo}>
         <Text style={styles.lessonNumber}>Lesson {lesson.id}</Text>
-        <Text style={styles.lessonTitle}>{lesson.title}</Text>
+        <Text style={styles.lessonTitle}>{lesson.displayTitle}</Text>
         <Text 
           style={styles.snippet}
           numberOfLines={2}

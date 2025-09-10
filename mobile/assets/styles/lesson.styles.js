@@ -62,7 +62,63 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 100
-  }
+  },
+  chatContainer: {
+    flex: 1,
+    paddingVertical: 16,
+  },
+  messageContainer: {
+    marginVertical: 8,
+    paddingHorizontal: 16,
+  },
+  leftMessage: {
+    alignItems: 'flex-start',
+  },
+  rightMessage: {
+    alignItems: 'flex-end',
+  },
+  speakerName: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+    marginBottom: 4,
+    marginHorizontal: 12,
+  },
+  messageBubble: {
+    maxWidth: '80%',
+    padding: 12,
+    borderRadius: 16,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  leftBubble: {
+    backgroundColor: COLORS.cardBackground,
+    borderBottomLeftRadius: 4,
+  },
+  rightBubble: {
+    backgroundColor: COLORS.textSecondary,
+    borderBottomRightRadius: 4,
+  },
+  messageText: {
+    fontSize: 16,
+    color: COLORS.textPrimary,
+    marginBottom: 4,
+  },
+  leftTranslationText: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    fontStyle: 'italic',
+    opacity: 0.7,
+  },
+  rightTranslationText: {
+    fontSize: 12,
+    color: COLORS.white,
+    fontStyle: 'italic',
+    opacity: 0.7,
+  },
 });
 
 export default styles;
