@@ -6,8 +6,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
-    padding: 16,
+    paddingHorizontal: 16,
     paddingBottom: 0,
+    paddingTop: 16
   },
   cardContainer: {
     flexDirection: "row",
@@ -27,13 +28,13 @@ const styles = StyleSheet.create({
   lessonInfo: {
     flex: 1,
   },
-  headerSection: {
+  lessonTitle: {
     fontSize: 20,
     fontWeight: "700",
     color: COLORS.textPrimary,
     marginBottom: 4,
   },
-  lessonTitle: {
+  lessonNumber: {
     fontSize: 14,
     color: COLORS.textSecondary,
     marginBottom: 4,
@@ -58,6 +59,9 @@ const styles = StyleSheet.create({
   lessonButtonText: {
     color: COLORS.white,
     fontWeight: "600",
+  },
+  listContent: {
+    paddingBottom: 100
   }
 });
 
