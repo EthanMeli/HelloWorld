@@ -9,7 +9,7 @@ export default function Loader({ size="large" }) {
         alignItems: "center",
         backgroundColor: COLORS.background
       }}>
-        <ActivityIndicator size={size} color={COLORS.primary} />
+        <ActivityIndicator size={size} color={COLORS.accent} />
       </View>
   )
 }

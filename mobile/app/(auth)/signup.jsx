@@ -11,7 +11,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { user, isLoading, register } = useAuthStore();
+  const { isLoading, register } = useAuthStore();
 
   const router = useRouter();
 
@@ -44,7 +44,7 @@ export default function Signup() {
               <Ionicons
                 name="person-outline"
                 size={20}
-                color={COLORS.primary}
+                color={COLORS.accent}
                 style={styles.inputIcon}
               />
               <TextInput
@@ -65,7 +65,7 @@ export default function Signup() {
               <Ionicons
                 name="mail-outline"
                 size={20}
-                color={COLORS.primary}
+                color={COLORS.accent}
                 style={styles.inputIcon}
               />
               <TextInput
@@ -87,7 +87,7 @@ export default function Signup() {
               <Ionicons
                 name="lock-closed-outline"
                 size={20}
-                color={COLORS.primary}
+                color={COLORS.accent}
                 style={styles.inputIcon}
               />
               <TextInput
@@ -105,7 +105,7 @@ export default function Signup() {
                 <Ionicons
                   name={showPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
-                  color={COLORS.primary}
+                  color={COLORS.accent}
                 />
               </TouchableOpacity>
             </View>
@@ -116,7 +116,7 @@ export default function Signup() {
             {isLoading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>Sign Up</Text>
+              <Text style={styles.buttonText}>SIGN UP</Text>
             )}
           </TouchableOpacity>
 

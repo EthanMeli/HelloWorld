@@ -1,4 +1,4 @@
-import { View, Image, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, Alert } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, Alert } from 'react-native'
 import { Link } from 'expo-router';
 import styles from "../../assets/styles/login.styles";
 import { useState } from 'react';
@@ -10,7 +10,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { user, isLoading, login, isCheckingAuth } = useAuthStore();
+  const { isLoading, login, isCheckingAuth } = useAuthStore();
 
   const handleLogin = async () => {
     const result = await login(email, password);
@@ -36,7 +36,7 @@ export default function Login() {
               <Ionicons 
                 name="mail-outline"
                 size={20}
-                color={COLORS.primary}
+                color={COLORS.accent}
                 style={styles.inputIcon}
               />
               <TextInput
@@ -58,7 +58,7 @@ export default function Login() {
               <Ionicons
                 name="lock-closed-outline"
                 size={20}
-                color={COLORS.primary}
+                color={COLORS.accent}
                 style={styles.inputIcon}
               />
               <TextInput
@@ -77,7 +77,7 @@ export default function Login() {
                 <Ionicons
                   name={showPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
-                  color={COLORS.primary}
+                  color={COLORS.accent}
                 />
               </TouchableOpacity>
             </View>
@@ -91,7 +91,7 @@ export default function Login() {
             {isLoading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={styles.buttonText}>LOGIN</Text>
             )}
           </TouchableOpacity>
 

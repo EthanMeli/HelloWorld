@@ -28,19 +28,34 @@
 //   black: "#000000",
 // };
 
-// OCEAN
+// RETRO 8-BIT DARK
 const COLORS = {
-  primary: "#1976D2", 
-  textPrimary: "#1a4971",
-  textSecondary: "#6d93b8", 
-  textDark: "#0d2b43", 
-  placeholderText: "#767676",
-  background: "#e3f2fd", 
-  cardBackground: "#f5f9ff",
-  inputBackground: "#f0f8ff", 
-  border: "#bbdefb",
-  white: "#ffffff",
+  // Main theme colors
+  primary: "#00FF00",     // Bright green (typical terminal/retro game color)
+  secondary: "#FF00FF",   // Hot pink/magenta for contrast
+  accent: "#FFFF00",      // Bright yellow for highlights
+  
+  // Text colors
+  textPrimary: "#00FF00", // Bright green text
+  textSecondary: "#00CCFF", // Cyan/blue text for secondary elements
+  textDark: "#FFFFFF",    // White text for dark backgrounds
+  placeholderText: "#4D4D4D", // Darker gray
+  
+  // Background colors
+  background: "#111111",  // Very dark gray, almost black
+  cardBackground: "#222222", // Dark gray for cards
+  inputBackground: "#333333", // Slightly lighter gray for inputs
+  
+  // UI elements
+  border: "#00FF00",      // Green borders
+  white: "#FFFFFF",
   black: "#000000",
+  
+  // Additional retro colors
+  retroRed: "#FF0000",    // Classic bright red
+  retroBlue: "#0000FF",   // Classic bright blue
+  retroPurple: "#9900FF", // Bright purple
+  retroOrange: "#FF6600", // Bright orange
 };
 
 // BLOSSOM

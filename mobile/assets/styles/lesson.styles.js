@@ -1,6 +1,7 @@
-// styles/profile.styles.js
+// styles/lesson.styles.js - Retro 8-bit Edition
 import { StyleSheet } from "react-native";
 import COLORS from "../../constants/colors";
+import { pixelText, pixelBorders } from "../../constants/retroStyles";
 
 const styles = StyleSheet.create({
   container: {
@@ -8,7 +9,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     paddingHorizontal: 16,
     paddingBottom: 0,
-    paddingTop: 16
+    paddingTop: 16,
   },
   cardContainer: {
     flexDirection: "row",
@@ -29,10 +30,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   lessonTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "700",
-    color: COLORS.textPrimary,
-    marginBottom: 4,
+    color: COLORS.primary,
+    marginBottom: 8,
+    fontFamily: "monospace",
+    letterSpacing: 2,
+    lineHeight: 24,
+    textTransform: "uppercase",
+    textShadowColor: 'rgba(0, 255, 0, 0.4)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
   lessonNumber: {
     fontSize: 14,
@@ -68,7 +76,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   messageContainer: {
-    marginVertical: 8,
+    marginVertical: 10,
     paddingHorizontal: 16,
   },
   leftMessage: {
@@ -80,44 +88,66 @@ const styles = StyleSheet.create({
   speakerName: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.textSecondary,
+    color: COLORS.accent,
     marginBottom: 4,
     marginHorizontal: 12,
+    ...pixelText.basic,
   },
   messageBubble: {
     maxWidth: '80%',
     padding: 12,
-    borderRadius: 16,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1,
+    // No border radius for pixel look
+    ...pixelBorders.thin,
+    borderWidth: 2,
+    elevation: 3,
+    // Pixelated shadow
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 0, // Sharp shadow for pixel effect
   },
   leftBubble: {
     backgroundColor: COLORS.cardBackground,
-    borderBottomLeftRadius: 4,
+    borderColor: COLORS.primary,
+    borderRightColor: '#006600', // Darker shade
+    borderBottomColor: '#006600', // Darker shade
   },
   rightBubble: {
-    backgroundColor: COLORS.textSecondary,
-    borderBottomRightRadius: 4,
+    backgroundColor: COLORS.cardBackground,
+    borderColor: COLORS.secondary,
+    borderRightColor: '#660066', // Darker shade
+    borderBottomColor: '#660066', // Darker shade
   },
   messageText: {
     fontSize: 16,
     color: COLORS.textPrimary,
-    marginBottom: 4,
+    marginBottom: 6,
+    fontFamily: "monospace",
+    letterSpacing: 1,
   },
   leftTranslationText: {
-    fontSize: 12,
+    fontSize: 11,
     color: COLORS.textSecondary,
     fontStyle: 'italic',
-    opacity: 0.7,
+    opacity: 0.8,
+    marginTop: 4,
+    paddingTop: 4,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 255, 0, 0.2)',
+    fontFamily: "monospace",
+    letterSpacing: 1,
   },
   rightTranslationText: {
-    fontSize: 12,
-    color: COLORS.white,
+    fontSize: 11,
+    color: COLORS.textSecondary,
     fontStyle: 'italic',
-    opacity: 0.7,
+    opacity: 0.8,
+    marginTop: 4,
+    paddingTop: 4,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 0, 255, 0.2)',
+    fontFamily: "monospace",
+    letterSpacing: 1,
   },
 });
 

@@ -8,10 +8,11 @@ export default function LessonsLayout() {
         headerStyle: {
           backgroundColor: COLORS.background,
         },
-        headerTintColor: COLORS.textPrimary,
+        headerTintColor: COLORS.accent, // Changed to yellow
         headerTitleStyle: {
-          fontWeight: '600',
-          color: COLORS.textPrimary,
+          fontWeight: '700',
+          color: COLORS.accent, // Changed to yellow
+          fontFamily: "monospace",
         },
         headerShadowVisible: false,
       }}

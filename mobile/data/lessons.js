@@ -2,22 +2,32 @@ export const lessons = [
   {
     id: 1,
     displayTitle: "Viel Glück!",
-    title: "Viel Glück¹!",
+    title: "Viel Glück!",
     snippet: "Guten Tag!",
+    grammarTips: [
+      {
+        id: 1,
+        title: "German Capitalization Rule",
+        content: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized."
+      }
+    ],
     dialogue: [
       {
         speaker: "Hanz",
         isSpeaker1: true,
-        text: "Guten Tag²!",
+        text: "Guten Tag!",
         translationText: "Good afternoon!",
         translations: {
           "Guten": "good",
           "Tag": "day"
         },
-        grammarNotes: {
-          1: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized.",
-          2: "Guten Tag is a common greeting in German. It literally means 'good day' and is used similarly to 'hello' in English."
-        }
+        grammarTips: [
+          {
+            id: 1,
+            title: "Common German Greeting",
+            content: "Guten Tag is a common greeting in German. It literally means 'good day' and is used similarly to 'hello' in English."
+          }
+        ]
       },
       {
         speaker: "Maria",
@@ -39,21 +49,31 @@ export const lessons = [
   {
     id: 2,
     displayTitle: "Viel Glück!",
-    title: "Viel Glück²!",
+    title: "Viel Glück!",
     snippet: "Guten Tag!",
+    grammarTips: [
+      {
+        id: 1,
+        title: "German Capitalization Rule",
+        content: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized."
+      }
+    ],
     dialogue: [
       {
         speaker: "Hanz",
         isSpeaker1: true,
-        text: "Guten Tag²!",
+        text: "Guten Tag!",
         translations: {
           "Guten": "good",
           "Tag": "day"
         },
-        grammarNotes: {
-          1: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized.",
-          2: "Guten Tag is a common greeting in German. It literally means 'good day' and is used similarly to 'hello' in English."
-        }
+        grammarTips: [
+          {
+            id: 1,
+            title: "Common German Greeting",
+            content: "Guten Tag is a common greeting in German. It literally means 'good day' and is used similarly to 'hello' in English."
+          }
+        ]
       },
       {
         speaker: "Maria",
@@ -66,7 +86,7 @@ export const lessons = [
           "es": "it",
           "dir": "you"
         },
-        grammarNotes: {}
+        grammarTips: []
       },
       // more dialogue entries...
     ]
@@ -74,8 +94,15 @@ export const lessons = [
   {
     id: 3,
     displayTitle: "Viel Glück!",
-    title: "Viel Glück¹!",
+    title: "Viel Glück!",
     snippet: "Guten Tag!",
+    grammarTips: [
+      {
+        id: 1,
+        title: "German Capitalization Rule",
+        content: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized."
+      }
+    ],
     dialogue: [
       {
         speaker: "Hanz",

@@ -1,6 +1,7 @@
-// styles/profile.styles.js
+// styles/profile.styles.js - Retro 8-bit Edition
 import { StyleSheet } from "react-native";
 import COLORS from "../../constants/colors";
+import { pixelBorders } from "../../constants/retroStyles";
 
 const styles = StyleSheet.create({
   container: {
@@ -19,22 +20,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: COLORS.cardBackground,
-    borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    // Retro styling - thick pixelated border
+    borderWidth: 4,
+    borderColor: COLORS.accent,
+    // Pixel perfect corners without radius
+    borderRightColor: '#888800', // Darker yellow
+    borderBottomColor: '#888800', // Darker yellow
+    // Pixel shadow effect
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.8,
+    shadowRadius: 0, // Sharp shadow for pixel effect
+    elevation: 4,
   },
   profileImage: {
     width: 80,
     height: 80,
-    borderRadius: 40,
     marginRight: 16,
+    borderWidth: 2,
+    borderColor: COLORS.accent,
   },
   profileInfo: {
     flex: 1,
@@ -42,51 +48,70 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 20,
     fontWeight: "700",
-    color: COLORS.textPrimary,
+    color: COLORS.accent, // Changed to yellow for retro look
     marginBottom: 4,
+    fontFamily: "monospace",
+    letterSpacing: 1,
+    textTransform: "uppercase",
   },
   email: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+    color: "#00CCFF", // Cyan for retro look
     marginBottom: 4,
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
   },
   memberSince: {
     fontSize: 12,
     color: COLORS.textSecondary,
+    fontFamily: "monospace",
   },
   logoutButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 12,
+    backgroundColor: COLORS.retroOrange, // Orange for logout button
     padding: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 24,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    // Retro button styling with pixelated border
+    borderWidth: 3,
+    borderTopColor: "#FF9933", // Lighter orange
+    borderLeftColor: "#FF9933", // Lighter orange
+    borderRightColor: "#CC5500", // Darker orange
+    borderBottomColor: "#CC5500", // Darker orange
+    // No border radius for 8-bit look
   },
   logoutText: {
-    color: COLORS.white,
+    color: COLORS.black, // Black text on orange button for contrast
     fontWeight: "600",
     marginLeft: 8,
+    fontFamily: "monospace",
+    letterSpacing: 1,
+    textTransform: "uppercase",
   },
   booksHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
+    // Retro styling - pixel border bottom
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.retroBlue,
+    paddingBottom: 8,
   },
   booksTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: COLORS.textPrimary,
+    color: COLORS.retroBlue, // Blue for section headers
+    fontFamily: "monospace",
+    letterSpacing: 1,
+    textTransform: "uppercase",
   },
   booksCount: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+    color: COLORS.retroBlue,
+    fontFamily: "monospace",
+    fontWeight: "bold",
   },
   booksList: {
     paddingBottom: 20,
@@ -94,22 +119,27 @@ const styles = StyleSheet.create({
   bookItem: {
     flexDirection: "row",
     backgroundColor: COLORS.cardBackground,
-    borderRadius: 12,
     padding: 12,
     marginBottom: 12,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    // Retro styling - pixelated border
+    borderWidth: 2,
+    borderColor: COLORS.retroBlue,
+    borderRightColor: "#000099", // Darker blue
+    borderBottomColor: "#000099", // Darker blue
+    // Pixel shadow
+    shadowColor: COLORS.retroBlue,
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.6,
+    shadowRadius: 0,
     elevation: 2,
-    borderWidth: 1,
-    borderColor: COLORS.border,
   },
   bookImage: {
     width: 70,
     height: 100,
-    borderRadius: 8,
     marginRight: 12,
+    // Retro styling - pixel border
+    borderWidth: 2,
+    borderColor: COLORS.retroOrange,
   },
   bookInfo: {
     flex: 1,
@@ -118,8 +148,10 @@ const styles = StyleSheet.create({
   bookTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: COLORS.textPrimary,
+    color: COLORS.retroBlue,
     marginBottom: 4,
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
   },
   ratingContainer: {
     flexDirection: "row",
@@ -127,47 +159,65 @@ const styles = StyleSheet.create({
   },
   bookCaption: {
     fontSize: 14,
-    color: COLORS.textDark,
+    color: COLORS.textPrimary,
     marginBottom: 4,
     flex: 1,
+    fontFamily: "monospace",
   },
   bookDate: {
     fontSize: 12,
-    color: COLORS.textSecondary,
+    color: COLORS.retroOrange,
+    fontFamily: "monospace",
   },
   deleteButton: {
     padding: 8,
     justifyContent: "center",
+    // Retro styling
+    backgroundColor: COLORS.retroRed,
+    borderWidth: 2,
+    borderColor: "#FF3333", // Lighter red
+    borderRightColor: "#CC0000", // Darker red
+    borderBottomColor: "#CC0000", // Darker red
+    marginLeft: 8,
   },
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
     padding: 40,
     marginTop: 20,
+    // Retro styling - dashed border
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderColor: COLORS.accent,
   },
   emptyText: {
     fontSize: 16,
     fontWeight: "600",
-    color: COLORS.textPrimary,
+    color: COLORS.accent,
     marginTop: 16,
     marginBottom: 20,
     textAlign: "center",
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
   },
   addButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 12,
+    backgroundColor: COLORS.retroOrange,
     paddingVertical: 12,
     paddingHorizontal: 20,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    // Retro styling - pixelated button
+    borderWidth: 3,
+    borderTopColor: "#FF9933", // Lighter orange
+    borderLeftColor: "#FF9933", // Lighter orange
+    borderRightColor: "#CC5500", // Darker orange
+    borderBottomColor: "#CC5500", // Darker orange
   },
   addButtonText: {
-    color: COLORS.white,
+    color: COLORS.black,
     fontWeight: "600",
     fontSize: 14,
+    fontFamily: "monospace",
+    letterSpacing: 1,
+    textTransform: "uppercase",
   },
 });
 
