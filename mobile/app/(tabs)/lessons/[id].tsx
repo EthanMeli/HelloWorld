@@ -1,9 +1,8 @@
-import { View, Text, ScrollView, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import React, { JSX, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { lessons } from '../../../data/lessons.js'
 import styles from '../../../assets/styles/lesson.styles';
-import COLORS from '../../../constants/colors';
 // @ts-ignore - JSX file without types
 import TappableText from '../../../components/lessons/TappableText';
 // @ts-ignore - JSX file without types
@@ -13,11 +12,19 @@ import GrammarModal from '../../../components/lessons/GrammarModal';
 // @ts-ignore - JSX file without types
 import DiceBearAvatar from '../../../components/lessons/DiceBearAvatar';
 
+// Define interfaces for better type safety
+interface GrammarTip {
+  id: number;
+  title: string;
+  content: string;
+}
+
 const LessonDetail = () => {
   // State for managing the grammar modal
   const [modalVisible, setModalVisible] = useState(false);
-  const [currentTips, setCurrentTips] = useState<any[]>([]);
-  const [completedTips, setCompletedTips] = useState<number[]>([]);
+  const [currentTips, setCurrentTips] = useState<GrammarTip[]>([]);
+  const [currentTipSource, setCurrentTipSource] = useState<string>('');
+  const [completedTipSources, setCompletedTipSources] = useState<string[]>([]);
   
   // Get the id parameter from the route
   const { id } = useLocalSearchParams();
@@ -40,16 +47,18 @@ const LessonDetail = () => {
     const isLeftSide = dialogue.isSpeaker1;
     const hasTips = dialogue.grammarTips && dialogue.grammarTips.length > 0;
 
+    // Create a unique source ID for this dialogue
+    const dialogueSourceId = `dialogue-${index}`;
+    
     // Handle opening grammar tips modal
     const handleGrammarTipPress = () => {
       setCurrentTips(dialogue.grammarTips);
+      setCurrentTipSource(dialogueSourceId);
       setModalVisible(true);
     };
     
-    // Check if this tip has been completed
-    const isTipCompleted = dialogue.grammarTips && 
-      dialogue.grammarTips.length > 0 && 
-      dialogue.grammarTips.every(tip => completedTips.includes(tip.id));
+    // Check if this specific dialogue's tips have been completed
+    const isTipCompleted = completedTipSources.includes(dialogueSourceId);
 
     return (
       <View
@@ -92,6 +101,8 @@ const LessonDetail = () => {
           <TappableText 
             text={dialogue.text}
             translations={dialogue.translations}
+            vocabularyMap={dialogue.vocabularyMap}
+            dialogueEntry={dialogue}
             isLeftSide={isLeftSide}
             textStyle={styles.messageText}
           />
@@ -112,23 +123,28 @@ const LessonDetail = () => {
     )
   }
 
+  // Create a unique source ID for the lesson title
+  const lessonTitleSourceId = `lesson-title-${lessonId}`;
+
   // Handle opening lesson title grammar tips
   const handleLessonTipPress = () => {
     if (lesson.grammarTips && lesson.grammarTips.length > 0) {
       setCurrentTips(lesson.grammarTips);
+      setCurrentTipSource(lessonTitleSourceId);
       setModalVisible(true);
     }
   };
   
-  // Handle completed tips
-  const handleTipsComplete = (tipIds: number[]) => {
-    setCompletedTips(prev => [...prev, ...tipIds]);
+  // Handle completed tips - now just stores the source ID
+  const handleTipsComplete = () => {
+    // Only add the current tip source to completed sources
+    if (currentTipSource) {
+      setCompletedTipSources(prev => [...prev, currentTipSource]);
+    }
   };
   
   // Check if lesson title tips are completed
-  const isLessonTipCompleted = lesson.grammarTips && 
-    lesson.grammarTips.length > 0 && 
-    lesson.grammarTips.every((tip: any) => completedTips.includes(tip.id));
+  const isLessonTipCompleted = completedTipSources.includes(lessonTitleSourceId);
 
   return (
     <View style={styles.container}>
@@ -140,7 +156,7 @@ const LessonDetail = () => {
           <GrammarTipButton
             onPress={handleLessonTipPress}
             count={lesson.grammarTips.length}
-            style={{ marginLeft: 10 }}
+            style={{ marginLeft: 15, marginBottom: 15 }}
           />
         )}
       </View>
@@ -167,7 +183,7 @@ const customStyles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center', // Changed to center
     marginBottom: 15,
   },
   speakerContainer: {

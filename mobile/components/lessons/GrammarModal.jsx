@@ -21,9 +21,9 @@ const GrammarModal = ({ visible, onClose, tips = [], onComplete }) => {
   const handleUnderstood = () => {
     setUnderstood(true);
     
-    // If there's an onComplete callback, call it
+    // If there's an onComplete callback, call it with no parameters
     if (onComplete) {
-      onComplete(tips.map(tip => tip.id));
+      onComplete();
     }
   };
   

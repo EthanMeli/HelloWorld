@@ -22,7 +22,7 @@ export default function LessonCard({ lesson, onPress }) {
         accessibilityRole="button"
         accessibilityLabel={`View lesson ${lesson.id}: ${lesson.title}`}
       >
-        <Text style={styles.lessonButtonText}>View Lesson</Text>
+        <Text style={styles.lessonButtonText}>VIEW LESSON</Text>
       </TouchableOpacity>
     </View>
   )

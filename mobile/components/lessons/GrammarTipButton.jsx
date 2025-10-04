@@ -96,6 +96,12 @@ const styles = StyleSheet.create({
     // No border radius for pixel art aesthetic
     alignSelf: 'flex-start',
     marginTop: 5,
+    // Pixelated shadow
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 0,
+    elevation: 3,
   },
   buttonRaised: {
     borderColor: COLORS.accent,

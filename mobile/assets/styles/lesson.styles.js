@@ -1,7 +1,7 @@
 // styles/lesson.styles.js - Retro 8-bit Edition
 import { StyleSheet } from "react-native";
 import COLORS from "../../constants/colors";
-import { pixelText, pixelBorders } from "../../constants/retroStyles";
+import { pixelText } from "../../constants/retroStyles";
 
 const styles = StyleSheet.create({
   container: {
@@ -15,16 +15,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: COLORS.cardBackground,
-    borderRadius: 16,
+    // No border radius for 8-bit look
     padding: 16,
     marginBottom: 16,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    // Pixel shadow effect
+    shadowColor: COLORS.accent, // Changed to yellow
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.8,
+    shadowRadius: 0, // Sharp shadow for pixel effect
+    elevation: 4,
+    // Retro styling - thick pixelated border
+    borderWidth: 3,
+    borderColor: COLORS.accent, // Changed to yellow
+    // Pixel perfect corners without radius
+    borderRightColor: '#888800', // Darker yellow
+    borderBottomColor: '#888800', // Darker yellow
   },
   lessonInfo: {
     flex: 1,
@@ -32,13 +37,13 @@ const styles = StyleSheet.create({
   lessonTitle: {
     fontSize: 24,
     fontWeight: "700",
-    color: COLORS.primary,
+    color: COLORS.accent, // Changed to yellow
     marginBottom: 8,
     fontFamily: "monospace",
     letterSpacing: 2,
     lineHeight: 24,
     textTransform: "uppercase",
-    textShadowColor: 'rgba(0, 255, 0, 0.4)',
+    textShadowColor: 'rgba(255, 255, 0, 0.4)', // Changed to yellow shadow
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 0,
   },
@@ -52,21 +57,30 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
   },
   lessonButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 12,
+    backgroundColor: COLORS.retroOrange, // Changed to orange
+    // No border radius for 8-bit look
     padding: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    // Retro button styling with pixelated border
+    borderWidth: 3,
+    borderTopColor: "#FF9933", // Lighter orange
+    borderLeftColor: "#FF9933", // Lighter orange
+    borderRightColor: "#CC5500", // Darker orange
+    borderBottomColor: "#CC5500", // Darker orange
+    // Pixel shadow effect
+    shadowColor: COLORS.retroOrange,
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.8,
+    shadowRadius: 0,
+    elevation: 4,
   },
   lessonButtonText: {
-    color: COLORS.white,
+    color: COLORS.black, // Changed to black
     fontWeight: "600",
+    fontFamily: "monospace",
+    textTransform: "uppercase",
   },
   listContent: {
     paddingBottom: 100
@@ -97,26 +111,25 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
     padding: 12,
     // No border radius for pixel look
-    ...pixelBorders.thin,
     borderWidth: 2,
     elevation: 3,
     // Pixelated shadow
-    shadowColor: COLORS.primary,
+    shadowColor: COLORS.accent, // Changed to yellow
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 0, // Sharp shadow for pixel effect
   },
   leftBubble: {
     backgroundColor: COLORS.cardBackground,
-    borderColor: COLORS.primary,
-    borderRightColor: '#006600', // Darker shade
-    borderBottomColor: '#006600', // Darker shade
+    borderColor: COLORS.accent, // Changed to yellow
+    borderRightColor: '#888800', // Darker yellow
+    borderBottomColor: '#888800', // Darker yellow
   },
   rightBubble: {
     backgroundColor: COLORS.cardBackground,
-    borderColor: COLORS.secondary,
-    borderRightColor: '#660066', // Darker shade
-    borderBottomColor: '#660066', // Darker shade
+    borderColor: COLORS.retroOrange, // Changed to orange
+    borderRightColor: '#CC5500', // Darker orange
+    borderBottomColor: '#CC5500', // Darker orange
   },
   messageText: {
     fontSize: 16,
@@ -133,7 +146,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     paddingTop: 4,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 255, 0, 0.2)',
+    borderTopColor: 'rgba(255, 255, 0, 0.2)', // Changed to yellow
     fontFamily: "monospace",
     letterSpacing: 1,
   },
@@ -145,7 +158,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     paddingTop: 4,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 0, 255, 0.2)',
+    borderTopColor: 'rgba(255, 102, 0, 0.2)', // Changed to orange
     fontFamily: "monospace",
     letterSpacing: 1,
   },
