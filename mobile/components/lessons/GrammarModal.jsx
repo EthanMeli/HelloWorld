@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, FlatList, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, FlatList } from 'react-native';
 import COLORS from '../../constants/colors';
-import { pixelText, pixelBorders, pixelButtons } from '../../constants/retroStyles';
 
 /**
- * GrammarModal Component - Retro 8-bit Style
+ * GrammarModal Component - Medieval RPG Style
  * 
- * This component displays a modal with grammar tips in a retro 8-bit style.
+ * This component displays a modal with grammar tips in a medieval RPG style.
  * 
  * @param {Object} props - Component props
  * @param {boolean} props.visible - Whether the modal is visible
@@ -43,11 +42,10 @@ const GrammarModal = ({ visible, onClose, tips = [], onComplete }) => {
       <TouchableOpacity 
         style={styles.modalOverlay} 
         activeOpacity={1} 
-        // Only allow closing by tapping outside if user has understood
         onPress={understood ? handleClose : undefined}
       >
         <View style={styles.modalContent}>
-          {/* Header with pixelated border */}
+          {/* Header with elegant border */}
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>
               {tips.length > 1 ? "GRAMMAR TIPS" : "GRAMMAR TIP"}
@@ -62,7 +60,7 @@ const GrammarModal = ({ visible, onClose, tips = [], onComplete }) => {
           {/* Border line to separate header from content */}
           <View style={styles.borderLine} />
           
-          {/* Content with pixelated styling */}
+          {/* Content with medieval styling */}
           <FlatList
             data={tips}
             keyExtractor={(item) => item.id.toString()}
@@ -104,15 +102,15 @@ const styles = StyleSheet.create({
     width: '90%',
     maxHeight: '80%',
     backgroundColor: COLORS.background,
-    // No border radius for pixel art aesthetic
+    borderRadius: 12,
     overflow: 'hidden',
-    borderWidth: 3,
-    borderColor: COLORS.primary,
-    // Pixel shadow effect
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
+    borderWidth: 2,
+    borderColor: COLORS.accent,
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 10,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -120,34 +118,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
     backgroundColor: COLORS.cardBackground,
-    borderBottomWidth: 3,
-    borderBottomColor: COLORS.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.accent,
   },
   modalTitle: {
-    color: COLORS.primary,
+    color: COLORS.accent,
     fontSize: 18,
     fontWeight: 'bold',
-    fontFamily: 'monospace',
-    letterSpacing: 1,
+    fontFamily: 'serif',
+    letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
   borderLine: {
-    height: 2,
+    height: 1,
     backgroundColor: COLORS.accent,
     marginHorizontal: 0,
+    opacity: 0.3,
   },
   closeButton: {
     width: 30,
     height: 30,
-    // No border radius for pixel art aesthetic
+    borderRadius: 15,
     backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: COLORS.textDark,
+    borderWidth: 1,
+    borderColor: COLORS.accent,
   },
   closeButtonText: {
-    color: COLORS.background,
+    color: COLORS.white,
     fontSize: 20,
     fontWeight: 'bold',
   },
@@ -161,6 +160,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     padding: 10,
     backgroundColor: COLORS.cardBackground,
+    borderRadius: 8,
   },
   divider: {
     height: 1,
@@ -172,39 +172,42 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     color: COLORS.primary,
-    fontFamily: 'monospace',
-    letterSpacing: 1,
+    fontFamily: 'serif',
+    letterSpacing: 0.5,
   },
   tipContent: {
     fontSize: 14,
     lineHeight: 22,
     color: COLORS.textPrimary,
-    fontFamily: 'monospace',
-    letterSpacing: 0.5,
+    fontFamily: 'serif',
+    letterSpacing: 0.3,
   },
   confirmationContainer: {
     padding: 15,
     alignItems: 'center',
-    borderTopWidth: 3,
+    borderTopWidth: 1,
     borderTopColor: COLORS.accent,
     backgroundColor: COLORS.cardBackground,
   },
   confirmButton: {
     backgroundColor: COLORS.accent,
     paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderWidth: 2,
-    borderTopColor: '#FFFFAA', // Lighter yellow
-    borderLeftColor: '#FFFFAA', // Lighter yellow
-    borderRightColor: '#888800', // Darker yellow
-    borderBottomColor: '#888800', // Darker yellow
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
   },
   confirmButtonText: {
     color: COLORS.background,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
     fontSize: 14,
     fontWeight: 'bold',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   }
 });
 

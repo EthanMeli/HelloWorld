@@ -28,34 +28,35 @@
 //   black: "#000000",
 // };
 
-// RETRO 8-BIT DARK
+// MEDIEVAL KINGDOM THEME
 const COLORS = {
   // Main theme colors
-  primary: "#00FF00",     // Bright green (typical terminal/retro game color)
-  secondary: "#FF00FF",   // Hot pink/magenta for contrast
-  accent: "#FFFF00",      // Bright yellow for highlights
+  primary: "#B8860B",      // Dark goldenrod
+  secondary: "#DAA520",    // Goldenrod
+  accent: "#FFD700",       // Pure gold for highlights
   
   // Text colors
-  textPrimary: "#00FF00", // Bright green text
-  textSecondary: "#00CCFF", // Cyan/blue text for secondary elements
-  textDark: "#FFFFFF",    // White text for dark backgrounds
-  placeholderText: "#4D4D4D", // Darker gray
+  textPrimary: "#F5F5DC",  // Beige/cream text for readability
+  textSecondary: "#D2B48C", // Tan for secondary text
+  textDark: "#8B4513",     // Saddle brown for dark text on light backgrounds
+  placeholderText: "#696969", // Dim gray
   
   // Background colors
-  background: "#111111",  // Very dark gray, almost black
-  cardBackground: "#222222", // Dark gray for cards
-  inputBackground: "#333333", // Slightly lighter gray for inputs
+  background: "#1E2A4A",   // Dark royal blue
+  cardBackground: "#2C3E50", // Darker blue-gray for cards
+  inputBackground: "#34495E", // Slightly lighter blue-gray for inputs
   
   // UI elements
-  border: "#00FF00",      // Green borders
+  border: "#FFD700",       // Gold borders
   white: "#FFFFFF",
   black: "#000000",
   
-  // Additional retro colors
-  retroRed: "#FF0000",    // Classic bright red
-  retroBlue: "#0000FF",   // Classic bright blue
-  retroPurple: "#9900FF", // Bright purple
-  retroOrange: "#FF6600", // Bright orange
+  // Additional medieval colors
+  medievalRed: "#8B0000",     // Dark red
+  medievalBlue: "#191970",    // Midnight blue
+  medievalPurple: "#483D8B",  // Dark slate blue
+  medievalBrown: "#A0522D",   // Sienna brown
+  medievalSilver: "#C0C0C0",  // Silver
 };
 
 // BLOSSOM

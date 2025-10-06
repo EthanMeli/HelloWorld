@@ -1,4 +1,4 @@
-// styles/lesson.styles.js - Retro 8-bit Edition
+// styles/lesson.styles.js - Medieval RPG Edition
 import { StyleSheet } from "react-native";
 import COLORS from "../../constants/colors";
 import { pixelText } from "../../constants/retroStyles";
@@ -15,21 +15,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: COLORS.cardBackground,
-    // No border radius for 8-bit look
+    borderRadius: 12, // Rounded corners for cleaner look
     padding: 16,
     marginBottom: 16,
-    // Pixel shadow effect
-    shadowColor: COLORS.accent, // Changed to yellow
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.8,
-    shadowRadius: 0, // Sharp shadow for pixel effect
-    elevation: 4,
-    // Retro styling - thick pixelated border
-    borderWidth: 3,
-    borderColor: COLORS.accent, // Changed to yellow
-    // Pixel perfect corners without radius
-    borderRightColor: '#888800', // Darker yellow
-    borderBottomColor: '#888800', // Darker yellow
+    // Elegant shadow effect
+    shadowColor: COLORS.accent, // Golden shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    // Medieval styling - elegant border
+    borderWidth: 2,
+    borderColor: COLORS.accent, // Golden border
   },
   lessonInfo: {
     flex: 1,
@@ -37,53 +34,50 @@ const styles = StyleSheet.create({
   lessonTitle: {
     fontSize: 24,
     fontWeight: "700",
-    color: COLORS.accent, // Changed to yellow
+    color: COLORS.accent, // Golden color
     marginBottom: 8,
-    fontFamily: "monospace",
-    letterSpacing: 2,
-    lineHeight: 24,
+    fontFamily: "serif", // More elegant font
+    letterSpacing: 0.5,
+    lineHeight: 28,
     textTransform: "uppercase",
-    textShadowColor: 'rgba(255, 255, 0, 0.4)', // Changed to yellow shadow
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 0,
+    textShadowColor: 'rgba(255, 215, 0, 0.3)', // Elegant golden shadow
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   lessonNumber: {
     fontSize: 14,
     color: COLORS.textSecondary,
     marginBottom: 4,
+    fontFamily: "serif",
   },
   snippet: {
     fontSize: 12,
     color: COLORS.textSecondary,
+    fontFamily: "serif",
+    fontStyle: "italic",
   },
   lessonButton: {
-    backgroundColor: COLORS.retroOrange, // Changed to orange
-    // No border radius for 8-bit look
+    backgroundColor: COLORS.primary, // Dark goldenrod
+    borderRadius: 8, // Rounded corners
     padding: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    // Retro button styling with pixelated border
-    borderWidth: 3,
-    borderTopColor: "#FF9933", // Lighter orange
-    borderLeftColor: "#FF9933", // Lighter orange
-    borderRightColor: "#CC5500", // Darker orange
-    borderBottomColor: "#CC5500", // Darker orange
-    // Pixel shadow effect
-    shadowColor: COLORS.retroOrange,
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 0.8,
-    shadowRadius: 0,
-    elevation: 4,
+    // Elegant shadow effect
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   lessonButtonText: {
-    color: COLORS.black, // Changed to black
+    color: COLORS.white, // White text
     fontWeight: "600",
-    fontFamily: "monospace",
+    fontFamily: "serif",
     textTransform: "uppercase",
   },
   listContent: {
-    paddingBottom: 100
+    paddingBottom: 100,
   },
   chatContainer: {
     flex: 1,
@@ -105,38 +99,34 @@ const styles = StyleSheet.create({
     color: COLORS.accent,
     marginBottom: 4,
     marginHorizontal: 12,
-    ...pixelText.basic,
+    fontFamily: "serif",
   },
   messageBubble: {
     maxWidth: '80%',
     padding: 12,
-    // No border radius for pixel look
-    borderWidth: 2,
+    borderRadius: 8, // Rounded corners for cleaner look
+    borderWidth: 1,
     elevation: 3,
-    // Pixelated shadow
-    shadowColor: COLORS.accent, // Changed to yellow
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 0, // Sharp shadow for pixel effect
+    // Elegant shadow
+    shadowColor: COLORS.accent, // Golden shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   leftBubble: {
     backgroundColor: COLORS.cardBackground,
-    borderColor: COLORS.accent, // Changed to yellow
-    borderRightColor: '#888800', // Darker yellow
-    borderBottomColor: '#888800', // Darker yellow
+    borderColor: COLORS.accent, // Golden border
   },
   rightBubble: {
     backgroundColor: COLORS.cardBackground,
-    borderColor: COLORS.retroOrange, // Changed to orange
-    borderRightColor: '#CC5500', // Darker orange
-    borderBottomColor: '#CC5500', // Darker orange
+    borderColor: COLORS.secondary, // Goldenrod border
   },
   messageText: {
     fontSize: 16,
     color: COLORS.textPrimary,
     marginBottom: 6,
-    fontFamily: "monospace",
-    letterSpacing: 1,
+    fontFamily: "serif",
+    lineHeight: 20,
   },
   leftTranslationText: {
     fontSize: 11,
@@ -146,9 +136,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
     paddingTop: 4,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 0, 0.2)', // Changed to yellow
-    fontFamily: "monospace",
-    letterSpacing: 1,
+    borderTopColor: 'rgba(255, 215, 0, 0.3)', // Golden
+    fontFamily: "serif",
   },
   rightTranslationText: {
     fontSize: 11,
@@ -158,9 +147,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
     paddingTop: 4,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 102, 0, 0.2)', // Changed to orange
-    fontFamily: "monospace",
-    letterSpacing: 1,
+    borderTopColor: 'rgba(218, 165, 32, 0.3)', // Goldenrod
+    fontFamily: "serif",
   },
 });
 

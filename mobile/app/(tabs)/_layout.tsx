@@ -10,27 +10,27 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: COLORS.accent, // Changed from primary (green) to accent (yellow)
+        tabBarActiveTintColor: COLORS.accent, // Golden color for active tabs
+        tabBarInactiveTintColor: COLORS.textSecondary, // Tan color for inactive tabs
         headerTitleStyle: {
           color: COLORS.accent,
           fontWeight: "600",
-          fontFamily: "monospace",
-          letterSpacing: 1,
-          textTransform: "uppercase"
+          fontFamily: "serif",
+          letterSpacing: 0.5,
         },
         headerShadowVisible: false,
         tabBarStyle: {
           backgroundColor: COLORS.cardBackground,
-          borderTopWidth: 3, // Thicker border for pixelated look
+          borderTopWidth: 1, // Cleaner border
           borderTopColor: COLORS.accent,
           paddingTop: 5,
           paddingBottom: insets.bottom,
           height: 60 + insets.bottom,
-          // Add pixel shadow
+          // Add elegant shadow
           shadowColor: COLORS.accent,
           shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.6,
-          shadowRadius: 0,
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
           elevation: 8,
         }
       }}

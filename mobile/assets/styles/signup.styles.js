@@ -11,48 +11,45 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: COLORS.cardBackground,
-    // No border radius for 8-bit look
+    borderRadius: 12, // Add rounded corners for cleaner look
     padding: 24,
-    // Retro styling - thick pixelated border
-    borderWidth: 4,
+    // Medieval styling - elegant border
+    borderWidth: 2,
     borderColor: COLORS.accent,
-    // Pixel perfect corners without radius
-    borderRightColor: '#888800', // Darker yellow
-    borderBottomColor: '#888800', // Darker yellow
-    // Pixel shadow effect
+    // Soft shadow effect
     shadowColor: COLORS.accent,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.8,
-    shadowRadius: 0, // Sharp shadow for pixel effect
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   header: {
     alignItems: "center",
     marginBottom: 24,
-    // Add pixel border bottom
-    borderBottomWidth: 2,
-    borderBottomColor: COLORS.retroBlue,
-    paddingBottom: 8,
+    // Add elegant border bottom
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.accent,
+    paddingBottom: 12,
   },
   title: {
     fontSize: 32,
     fontWeight: "700",
-    color: COLORS.accent, // Changed to yellow
+    color: COLORS.accent, // Golden color
     marginBottom: 8,
-    fontFamily: "monospace",
-    letterSpacing: 1,
+    fontFamily: "serif", // More elegant font
+    letterSpacing: 0.5,
     textTransform: "uppercase",
-    // Add text shadow for pixel effect
-    textShadowColor: 'rgba(255, 255, 0, 0.4)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 0,
+    // Add elegant text shadow
+    textShadowColor: 'rgba(255, 215, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   subtitle: {
     fontSize: 16,
-    color: COLORS.retroBlue, // Changed to blue
+    color: COLORS.textSecondary, // Tan color
     textAlign: "center",
-    fontFamily: "monospace",
-    letterSpacing: 0.5,
+    fontFamily: "serif",
+    fontStyle: "italic",
   },
   formContainer: { 
     marginBottom: 16 
@@ -63,60 +60,52 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginBottom: 8,
-    color: COLORS.retroBlue, // Changed to blue
+    color: COLORS.textSecondary, // Tan color
     fontWeight: "600",
-    fontFamily: "monospace",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
+    fontFamily: "serif",
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: COLORS.inputBackground,
-    // No border radius for 8-bit look
-    borderWidth: 2, // Thicker border for pixel look
-    borderColor: COLORS.accent, // Changed to yellow
+    borderRadius: 8, // Rounded corners
+    borderWidth: 1,
+    borderColor: COLORS.accent, // Golden border
     paddingHorizontal: 12,
   },
   inputIcon: { 
     marginRight: 10,
-    color: COLORS.accent, // Changed to yellow
+    color: COLORS.accent, // Golden color
   },
   input: {
     flex: 1,
     height: 48,
     color: COLORS.textPrimary,
-    fontFamily: "monospace",
+    fontFamily: "serif",
   },
   eyeIcon: { 
     padding: 8,
-    color: COLORS.accent, // Changed to yellow
+    color: COLORS.accent, // Golden color
   },
   button: {
-    backgroundColor: COLORS.retroOrange, // Changed to orange
-    // No border radius for 8-bit look
+    backgroundColor: COLORS.primary, // Dark goldenrod
+    borderRadius: 8, // Rounded corners
     height: 50,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 16,
-    // Retro button styling with pixelated border
-    borderWidth: 3,
-    borderTopColor: "#FF9933", // Lighter orange
-    borderLeftColor: "#FF9933", // Lighter orange
-    borderRightColor: "#CC5500", // Darker orange
-    borderBottomColor: "#CC5500", // Darker orange
-    // Pixel shadow effect
-    shadowColor: COLORS.retroOrange,
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 0.8,
-    shadowRadius: 0,
-    elevation: 4,
+    // Elegant shadow effect
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   buttonText: {
-    color: COLORS.black, // Changed to black
+    color: COLORS.white, // White text on dark golden button
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: "monospace",
+    fontFamily: "serif",
     textTransform: "uppercase",
   },
   footer: {
@@ -127,12 +116,12 @@ const styles = StyleSheet.create({
   footerText: {
     color: COLORS.textSecondary,
     marginRight: 5,
-    fontFamily: "monospace",
+    fontFamily: "serif",
   },
   link: {
-    color: COLORS.accent, // Changed to yellow
+    color: COLORS.accent, // Golden color
     fontWeight: "600",
-    fontFamily: "monospace",
+    fontFamily: "serif",
   },
 });
 

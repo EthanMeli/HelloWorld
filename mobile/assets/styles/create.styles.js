@@ -14,19 +14,16 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: COLORS.cardBackground,
-    // No border radius for 8-bit look
+    borderRadius: 12,
     padding: 20,
     marginVertical: 16,
-    borderWidth: 3, // Thicker border for pixel look
+    borderWidth: 2,
     borderColor: COLORS.accent,
-    borderRightColor: '#888800', // Darker yellow
-    borderBottomColor: '#888800', // Darker yellow
-    // Pixel shadow effect
-    shadowColor: COLORS.accent,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.8,
-    shadowRadius: 0, // Sharp shadow for pixel effect
-    elevation: 4,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
   },
   header: {
     alignItems: "center",

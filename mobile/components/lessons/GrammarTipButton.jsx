@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { TouchableOpacity, Text, StyleSheet, View, Animated } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, Animated } from 'react-native';
 import COLORS from '../../constants/colors';
-import { pixelText, pixelBorders } from '../../constants/retroStyles';
-import { createPulseEffect } from '../../constants/pixelEffects';
 
 /**
  * GrammarTipButton Component - Retro 8-bit Style
@@ -92,37 +90,30 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.cardBackground,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderWidth: 2,
-    // No border radius for pixel art aesthetic
+    borderWidth: 1,
+    borderRadius: 6, // Rounded corners for cleaner look
     alignSelf: 'flex-start',
     marginTop: 5,
-    // Pixelated shadow
+    // Elegant shadow
     shadowColor: COLORS.accent,
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 0,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   buttonRaised: {
     borderColor: COLORS.accent,
-    borderTopColor: COLORS.accent,
-    borderLeftColor: COLORS.accent,
-    borderRightColor: '#888800', // Darker shade for 3D effect
-    borderBottomColor: '#888800', // Darker shade for 3D effect
   },
   buttonPressed: {
-    borderColor: COLORS.accent,
-    borderTopColor: '#888800', // Darker shade for 3D effect
-    borderLeftColor: '#888800', // Darker shade for 3D effect
-    borderRightColor: COLORS.accent,
-    borderBottomColor: COLORS.accent,
+    borderColor: COLORS.secondary,
+    backgroundColor: COLORS.inputBackground,
   },
   text: {
     color: COLORS.accent,
     fontSize: 10,
     fontWeight: 'bold',
-    fontFamily: 'monospace',
-    letterSpacing: 1,
+    fontFamily: 'serif',
+    letterSpacing: 0.5,
     textTransform: 'uppercase',
   }
 });

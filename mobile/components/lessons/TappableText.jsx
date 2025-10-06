@@ -292,7 +292,7 @@ const TappableText = ({
                   {/* Word form as used in dialogue */}
                   {selectedWord !== flashcardData.baseForm && (
                     <Text style={styles.wordFormText}>
-                      As used in dialogue: "{selectedWord}"
+                      As used in dialogue: &quot;{selectedWord}&quot;
                     </Text>
                   )}
                   
@@ -470,38 +470,35 @@ const styles = StyleSheet.create({
   flashcardContent: {
     width: '85%',
     backgroundColor: COLORS.cardBackground,
-    // No border radius for pixel art aesthetic
+    borderRadius: 12, // Rounded corners for cleaner look
     overflow: 'hidden',
-    borderWidth: 4,
+    borderWidth: 2,
     borderColor: COLORS.accent,
-    // Add pixel-perfect corners
-    borderRightColor: '#888800', // Darker yellow
-    borderBottomColor: '#888800', // Darker yellow
-    // Pixel shadow effect
+    // Elegant shadow effect
     shadowColor: COLORS.accent,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.8,
-    shadowRadius: 0,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 10,
   },
   flashcardHeader: {
     padding: 15,
     backgroundColor: COLORS.background,
     alignItems: 'center',
-    borderBottomWidth: 3,
+    borderBottomWidth: 1,
     borderBottomColor: COLORS.accent,
   },
   flashcardWord: {
     color: COLORS.accent,
     fontSize: 24,
     fontWeight: 'bold',
-    fontFamily: 'monospace',
-    letterSpacing: 1,
+    fontFamily: 'serif', // More elegant font
+    letterSpacing: 0.5,
     textTransform: 'uppercase',
-    // Add text shadow for pixel effect
-    textShadowColor: 'rgba(255, 255, 0, 0.4)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 0,
+    // Add elegant text shadow
+    textShadowColor: 'rgba(255, 215, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   flashcardBody: {
     padding: 20,
@@ -512,20 +509,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 0, 0.2)',
+    borderBottomColor: 'rgba(255, 215, 0, 0.2)', // Golden color
     paddingBottom: 12,
   },
   partOfSpeech: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: COLORS.retroOrange,
+    color: COLORS.secondary, // Goldenrod
     marginRight: 8,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
   },
   translation: {
     fontSize: 18,
     color: COLORS.textPrimary,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
     flex: 1,
   },
   exampleContainer: {
@@ -533,20 +530,20 @@ const styles = StyleSheet.create({
   },
   exampleLabel: {
     fontSize: 14,
-    color: COLORS.retroBlue,
+    color: COLORS.textSecondary, // Tan color
     fontWeight: 'bold',
     marginBottom: 6,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
   },
   exampleText: {
     fontSize: 16,
     color: COLORS.textPrimary,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
     lineHeight: 24,
   },
   boldText: {
     fontWeight: 'bold',
-    color: COLORS.retroOrange, // Makes bolded words orange
+    color: COLORS.accent, // Golden color for emphasis
   },
   conjugationContainer: {
     marginBottom: 16,
@@ -557,24 +554,24 @@ const styles = StyleSheet.create({
   },
   conjugationTitle: {
     fontSize: 14,
-    color: COLORS.retroBlue,
+    color: COLORS.primary,
     fontWeight: 'bold',
     marginBottom: 6,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
   },
   conjugationText: {
     fontSize: 14,
     color: COLORS.textPrimary,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
     marginBottom: 4,
   },
   conjugationSubtitle: {
     fontSize: 14,
-    color: COLORS.retroGreen,
+    color: COLORS.accent,
     fontWeight: 'bold',
     marginTop: 8,
     marginBottom: 4,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
   },
   wordFormText: {
     fontSize: 14,
@@ -589,7 +586,7 @@ const styles = StyleSheet.create({
   exampleTranslation: {
     fontSize: 14,
     color: COLORS.textSecondary,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
     fontStyle: 'italic',
     marginTop: 4,
   }
