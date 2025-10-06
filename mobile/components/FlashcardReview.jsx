@@ -8,7 +8,7 @@ const { width: screenWidth } = Dimensions.get('window');
 const FlashcardReview = ({ deck, onComplete, onExit }) => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [completedCards, setCompletedCards] = useState(0);
+  const [completedCardIds, setCompletedCardIds] = useState(new Set());
   const [reviewCards, setReviewCards] = useState([]);
   const [cardsToReview, setCardsToReview] = useState([]);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
@@ -18,16 +18,12 @@ const FlashcardReview = ({ deck, onComplete, onExit }) => {
 
   useEffect(() => {
     if (deck && deck.cards && deck.cards.length > 0) {
-      console.log('Loading deck:', deck.title);
-      console.log('Cards in deck:', deck.cards.length);
-      console.log('Sample card:', deck.cards[0]);
-      
       // Initialize cards for review
       const shuffledCards = [...deck.cards].sort(() => Math.random() - 0.5);
       setCardsToReview(shuffledCards);
       setReviewCards([]);
       setCurrentCardIndex(0);
-      setCompletedCards(0);
+      setCompletedCardIds(new Set());
       setIsFlipped(false);
     }
   }, [deck]);
@@ -74,9 +70,6 @@ const FlashcardReview = ({ deck, onComplete, onExit }) => {
   const handleSwipe = (isCorrect) => {
     const direction = isCorrect ? screenWidth * 1.5 : -screenWidth * 1.5;
     
-    console.log(`Card swiped ${isCorrect ? 'right (completed)' : 'left (needs review)'}`);
-    console.log('Current card:', currentCard.front);
-    
     Animated.timing(translateX, {
       toValue: direction,
       duration: 300,
@@ -87,29 +80,34 @@ const FlashcardReview = ({ deck, onComplete, onExit }) => {
       setIsFlipped(false);
 
       if (isCorrect) {
-        // Card completed - don't show again
-        setCompletedCards(prev => {
-          const newCompletedCount = prev + 1;
-          console.log(`Completed cards: ${newCompletedCount}/${totalCards}`);
+        // Card completed - add to completed set
+        const currentCard = cardsToReview[currentCardIndex];
+        const cardId = `${currentCard.front}_${currentCard.back}`; // Create unique ID
+        
+        setCompletedCardIds(prev => {
+          const newCompletedSet = new Set(prev);
+          newCompletedSet.add(cardId);
           
           // Check if all cards are completed
-          if (newCompletedCount >= totalCards) {
-            console.log('All cards completed! Ending review.');
+          if (newCompletedSet.size >= totalCards) {
             handleReviewComplete();
-            return newCompletedCount;
+            return newCompletedSet;
           }
           moveToNextCard();
-          return newCompletedCount;
+          return newCompletedSet;
         });
       } else {
-        // Card needs review - add to end of review pile
+        // Card needs review - only add to review pile if not already completed
         const cardToReview = cardsToReview[currentCardIndex];
-        console.log('Adding card to review pile:', cardToReview.front);
-        setReviewCards(prev => {
-          const newReviewCards = [...prev, cardToReview];
-          console.log('Review pile now has', newReviewCards.length, 'cards');
-          return newReviewCards;
-        });
+        const cardId = `${cardToReview.front}_${cardToReview.back}`;
+        
+        // Only add to review pile if this card hasn't been completed yet
+        if (!completedCardIds.has(cardId)) {
+          setReviewCards(prev => {
+            const newReviewCards = [...prev, cardToReview];
+            return newReviewCards;
+          });
+        }
         moveToNextCard();
       }
     });
@@ -131,7 +129,6 @@ const FlashcardReview = ({ deck, onComplete, onExit }) => {
       } else {
         // This should not happen if our logic is correct
         // All cards should be completed before we reach this state
-        console.warn('No cards to review but completion not triggered properly');
         handleReviewComplete();
       }
     } else {
@@ -153,7 +150,7 @@ const FlashcardReview = ({ deck, onComplete, onExit }) => {
             setCardsToReview(shuffledCards);
             setReviewCards([]);
             setCurrentCardIndex(0);
-            setCompletedCards(0);
+            setCompletedCardIds(new Set());
             setIsFlipped(false);
           }
         },
@@ -199,7 +196,7 @@ const FlashcardReview = ({ deck, onComplete, onExit }) => {
             <MaterialIcons name="info-outline" size={24} color={COLORS.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.progressText}>
-            {completedCards}/{totalCards}
+            {completedCardIds.size}/{totalCards}
           </Text>
         </View>
       </View>
@@ -209,7 +206,7 @@ const FlashcardReview = ({ deck, onComplete, onExit }) => {
         <View 
           style={[
             styles.progressFill, 
-            { width: `${(completedCards / totalCards) * 100}%` }
+            { width: `${(completedCardIds.size / totalCards) * 100}%` }
           ]} 
         />
       </View>

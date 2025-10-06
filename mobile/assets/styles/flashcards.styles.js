@@ -86,9 +86,6 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   settingsButton: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
     width: 32,
     height: 32,
     backgroundColor: COLORS.primary,
@@ -102,6 +99,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 3,
+  },
+  settingsButtonHitArea: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 24,
   },
   settingsButtonText: {
     fontSize: 16,
@@ -375,6 +382,44 @@ const styles = StyleSheet.create({
   selectedDeckOptionText: {
     color: COLORS.background,
     fontWeight: 'bold',
+  },
+  cardsList: {
+    maxHeight: 300,
+    marginVertical: 10,
+  },
+  cardListItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginVertical: 3,
+    backgroundColor: COLORS.cardBackground,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.accent,
+  },
+  cardNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.accent,
+    marginRight: 10,
+    minWidth: 25,
+    fontFamily: 'serif',
+  },
+  cardFrontText: {
+    fontSize: 16,
+    color: COLORS.white,
+    flex: 1,
+    lineHeight: 22,
+    fontFamily: 'serif',
+  },
+  emptyDeckText: {
+    fontSize: 16,
+    color: COLORS.gray,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    marginVertical: 20,
+    fontFamily: 'serif',
   },
 });
 

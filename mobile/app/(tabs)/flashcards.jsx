@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, FlatList, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons, FontAwesome5, Entypo } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import styles from '../../assets/styles/flashcards.styles';
 import FlashcardReview from '../../components/FlashcardReview';
 
@@ -167,10 +168,11 @@ export default function Flashcards() {
   };
 
   const handleViewCards = () => {
-    // TODO: Implement view cards functionality
-    Alert.alert('View Cards', 'View cards functionality will be implemented next!');
     setDeckSettingsModalVisible(false);
-    setSelectedDeckForSettings(null);
+    router.push({
+      pathname: '/view-cards',
+      params: { deckId: selectedDeckForSettings.id }
+    });
   };
 
   const handleCloseDeckSettings = () => {
@@ -206,10 +208,16 @@ export default function Flashcards() {
   const renderDeckCard = ({ item }) => (
     <TouchableOpacity style={styles.deckCard} onPress={() => handleDeckClick(item)}>
       <TouchableOpacity 
-        style={styles.settingsButton}
-        onPress={() => handleDeckSettings(item)}
+        style={styles.settingsButtonHitArea}
+        onPress={(e) => {
+          e.stopPropagation();
+          handleDeckSettings(item);
+        }}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
-        <MaterialIcons name="settings" size={18} color="#FFFFFF" />
+        <View style={styles.settingsButton}>
+          <MaterialIcons name="settings" size={18} color="#FFFFFF" />
+        </View>
       </TouchableOpacity>
       
       <Text style={styles.deckTitle}>{item.title}</Text>
