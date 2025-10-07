@@ -105,15 +105,18 @@ const FlashcardReview = ({ deck, onComplete, onExit }) => {
         if (!completedCardIds.has(cardId)) {
           setReviewCards(prev => {
             const newReviewCards = [...prev, cardToReview];
+            // Pass the updated review cards to moveToNextCard
+            moveToNextCard(newReviewCards);
             return newReviewCards;
           });
+        } else {
+          moveToNextCard();
         }
-        moveToNextCard();
       }
     });
   };
 
-  const moveToNextCard = () => {
+  const moveToNextCard = (updatedReviewCards) => {
     const remainingCards = cardsToReview.slice(currentCardIndex + 1);
     
     // Reset flip state for new card
@@ -121,14 +124,17 @@ const FlashcardReview = ({ deck, onComplete, onExit }) => {
     
     if (remainingCards.length === 0) {
       // No more cards in current set
-      if (reviewCards.length > 0) {
+      // Use the updated review cards if provided, otherwise use the current state
+      const cardsToCheck = updatedReviewCards !== undefined ? updatedReviewCards : reviewCards;
+      
+      if (cardsToCheck.length > 0) {
         // Move review cards back to main pile and continue
-        setCardsToReview(reviewCards);
+        setCardsToReview(cardsToCheck);
         setReviewCards([]);
         setCurrentCardIndex(0);
       } else {
-        // This should not happen if our logic is correct
-        // All cards should be completed before we reach this state
+        // Only complete if all cards are actually completed
+        // This should only happen when all cards have been swiped right
         handleReviewComplete();
       }
     } else {
