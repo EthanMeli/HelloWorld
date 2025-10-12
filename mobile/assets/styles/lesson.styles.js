@@ -1,7 +1,6 @@
 // styles/lesson.styles.js - Medieval RPG Edition
 import { StyleSheet } from "react-native";
 import COLORS from "../../constants/colors";
-import { pixelText } from "../../constants/retroStyles";
 
 const styles = StyleSheet.create({
   container: {
@@ -149,6 +148,118 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: 'rgba(218, 165, 32, 0.3)', // Goldenrod
     fontFamily: "serif",
+  },
+  
+  // RPG Dialogue Styles
+  rpgDialogueContainer: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  characterArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.accent,
+  },
+  characterIndicator: {
+    backgroundColor: COLORS.cardBackground,
+    paddingVertical: 20,
+    paddingHorizontal: 30,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: COLORS.accent,
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    minWidth: 200,
+    alignItems: 'center',
+  },
+  characterLeft: {
+    alignSelf: 'flex-start',
+    marginLeft: 40,
+  },
+  characterRight: {
+    alignSelf: 'flex-end',
+    marginRight: 40,
+  },
+  characterName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: COLORS.accent,
+    fontFamily: 'serif',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    textShadowColor: 'rgba(255, 215, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  characterPosition: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    fontFamily: 'serif',
+    marginTop: 5,
+    fontStyle: 'italic',
+  },
+  dialogueBox: {
+    backgroundColor: COLORS.cardBackground,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderWidth: 3,
+    borderBottomWidth: 0,
+    borderColor: COLORS.accent,
+    minHeight: 200,
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  dialogueContent: {
+    padding: 20,
+    flex: 1,
+  },
+  speakerLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.accent,
+    fontFamily: 'serif',
+    marginBottom: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  dialogueText: {
+    fontSize: 18,
+    color: COLORS.textPrimary,
+    fontFamily: 'serif',
+    lineHeight: 26,
+    marginBottom: 15,
+    minHeight: 60,
+  },
+  translationText: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    fontFamily: 'serif',
+    fontStyle: 'italic',
+    opacity: 0.9,
+    marginBottom: 15,
+    minHeight: 20,
+  },
+  continueIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginTop: 10,
+  },
+  continueText: {
+    fontSize: 12,
+    color: COLORS.accent,
+    fontFamily: 'serif',
+    marginLeft: 5,
+    fontStyle: 'italic',
   },
 });
 

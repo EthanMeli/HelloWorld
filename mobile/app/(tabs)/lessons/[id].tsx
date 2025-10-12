@@ -11,6 +11,8 @@ import GrammarTipButton from '../../../components/lessons/GrammarTipButton';
 import GrammarModal from '../../../components/lessons/GrammarModal';
 // @ts-ignore - JSX file without types
 import DiceBearAvatar from '../../../components/lessons/DiceBearAvatar';
+// @ts-ignore - JSX file without types
+import RPGDialogue from '../../../components/lessons/RPGDialogue';
 
 // Define interfaces for better type safety
 interface GrammarTip {
@@ -25,6 +27,10 @@ const LessonDetail = () => {
   const [currentTips, setCurrentTips] = useState<GrammarTip[]>([]);
   const [currentTipSource, setCurrentTipSource] = useState<string>('');
   const [completedTipSources, setCompletedTipSources] = useState<string[]>([]);
+  
+  // State for RPG dialogue progression
+  const [showRPGDialogue, setShowRPGDialogue] = useState(true);
+  const [currentDialogueIndex, setCurrentDialogueIndex] = useState(0);
   
   // Get the id parameter from the route
   const { id } = useLocalSearchParams();
@@ -41,6 +47,17 @@ const LessonDetail = () => {
       </View>
     );
   }
+
+  // Handle RPG dialogue completion
+  const handleRPGDialogueComplete = () => {
+    if (currentDialogueIndex < lesson.dialogue.length - 1) {
+      // Move to next dialogue
+      setCurrentDialogueIndex(currentDialogueIndex + 1);
+    } else {
+      // All dialogues complete, switch to chat interface
+      setShowRPGDialogue(false);
+    }
+  };
 
   // Handle displaying multiple dialogues and speakers
   const renderDialogueBox = (dialogue: any, index: number): JSX.Element => {
@@ -148,24 +165,35 @@ const LessonDetail = () => {
 
   return (
     <View style={styles.container}>
-      <View style={customStyles.titleContainer}>
-        <Text style={styles.lessonTitle}>{lesson.title}</Text>
-        
-        {/* Grammar Tip Button for lesson title */}
-        {lesson.grammarTips && lesson.grammarTips.length > 0 && !isLessonTipCompleted && (
-          <GrammarTipButton
-            onPress={handleLessonTipPress}
-            count={lesson.grammarTips.length}
-            style={{ marginLeft: 15, marginBottom: 15 }}
-          />
-        )}
-      </View>
-      
-      <ScrollView style={styles.chatContainer}>
-        {lesson.dialogue.map((dialogue, index) =>
-          renderDialogueBox(dialogue, index)
-        )}
-      </ScrollView>
+      {showRPGDialogue ? (
+        <RPGDialogue 
+          dialogue={lesson.dialogue[currentDialogueIndex]}
+          onDialogueComplete={handleRPGDialogueComplete}
+          currentDialogueIndex={currentDialogueIndex}
+          isActive={true}
+        />
+      ) : (
+        <>
+          <View style={customStyles.titleContainer}>
+            <Text style={styles.lessonTitle}>{lesson.title}</Text>
+            
+            {/* Grammar Tip Button for lesson title */}
+            {lesson.grammarTips && lesson.grammarTips.length > 0 && !isLessonTipCompleted && (
+              <GrammarTipButton
+                onPress={handleLessonTipPress}
+                count={lesson.grammarTips.length}
+                style={{ marginLeft: 15, marginBottom: 15 }}
+              />
+            )}
+          </View>
+          
+          <ScrollView style={styles.chatContainer}>
+            {lesson.dialogue.map((dialogue, index) =>
+              renderDialogueBox(dialogue, index)
+            )}
+          </ScrollView>
+        </>
+      )}
       
       {/* Grammar Tips Modal */}
       <GrammarModal 
