@@ -4,26 +4,25 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { FontAwesome5, Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SafeScreen from '../components/SafeScreen';
+import EditCardModal from '../components/flashcards/EditCardModal';
 import { createViewCardsStyles } from '../assets/styles/viewCards.styles';
 
 const ViewCards = () => {
   const { deckId } = useLocalSearchParams();
   const [deck, setDeck] = useState(null);
   const [cards, setCards] = useState([]);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedCardForEdit, setSelectedCardForEdit] = useState(null);
+  const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const styles = createViewCardsStyles();
 
   useEffect(() => {
     const loadDeck = async () => {
       try {
-        console.log('Loading deck with ID:', deckId);
         const storedDecks = await AsyncStorage.getItem('flashcard_decks');
-        console.log('Stored decks:', storedDecks);
         if (storedDecks) {
           const decks = JSON.parse(storedDecks);
-          console.log('Parsed decks:', decks);
-          console.log('Looking for deck with ID:', deckId);
           const foundDeck = decks.find(d => d.id === deckId);
-          console.log('Found deck:', foundDeck);
           if (foundDeck) {
             setDeck(foundDeck);
             setCards(foundDeck.cards || []);
@@ -38,8 +37,49 @@ const ViewCards = () => {
   }, [deckId]);
 
   const handleEditCard = (cardIndex) => {
-    // TODO: Implement card editing functionality
-    Alert.alert('Edit Card', 'Card editing functionality coming soon!');
+    const cardToEdit = cards[cardIndex];
+    setSelectedCardForEdit(cardToEdit);
+    setSelectedCardIndex(cardIndex);
+    setEditModalVisible(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditModalVisible(false);
+    setSelectedCardForEdit(null);
+    setSelectedCardIndex(null);
+  };
+
+  const handleSaveEdit = async (updatedCard) => {
+    try {
+      // Update the cards array
+      const updatedCards = [...cards];
+      updatedCards[selectedCardIndex] = updatedCard;
+      
+      // Update the deck object
+      const updatedDeck = { ...deck, cards: updatedCards };
+      
+      // Save to AsyncStorage
+      const storedDecks = await AsyncStorage.getItem('flashcard_decks');
+      const decks = JSON.parse(storedDecks || '[]');
+      const deckIndex = decks.findIndex(d => d.id === deckId);
+      
+      if (deckIndex !== -1) {
+        decks[deckIndex] = updatedDeck;
+        await AsyncStorage.setItem('flashcard_decks', JSON.stringify(decks));
+        
+        // Update local state
+        setCards(updatedCards);
+        setDeck(updatedDeck);
+        
+        // Close modal
+        setEditModalVisible(false);
+        setSelectedCardForEdit(null);
+        setSelectedCardIndex(null);
+      }
+    } catch (error) {
+      console.error('Error updating card:', error);
+      Alert.alert('Error', 'Failed to update card');
+    }
   };
 
   const handleDeleteCard = (cardIndex) => {
@@ -91,18 +131,15 @@ const ViewCards = () => {
   return (
     <SafeScreen>
       <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
+        {/* Header with back arrow and title */}
+        <View style={styles.headerContainer}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <FontAwesome5 name="arrow-left" size={20} color="#FFD700" />
           </TouchableOpacity>
           
-          <View style={styles.headerCenter}>
-            <Text style={styles.deckTitle}>{deck.name}</Text>
-            <Text style={styles.cardCount}>{cards.length} card{cards.length !== 1 ? 's' : ''}</Text>
-          </View>
-          
-          <View style={styles.headerRight} />
+          <Text style={styles.pageTitle}>
+            {cards.length} card{cards.length !== 1 ? 's' : ''}
+          </Text>
         </View>
 
         {/* Cards List */}
@@ -154,6 +191,14 @@ const ViewCards = () => {
           </View>
         )}
       </View>
+
+      {/* Edit Card Modal */}
+      <EditCardModal
+        visible={editModalVisible}
+        card={selectedCardForEdit}
+        onCancel={handleCancelEdit}
+        onSave={handleSaveEdit}
+      />
     </SafeScreen>
   );
 };

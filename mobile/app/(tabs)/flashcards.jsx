@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, FlatList, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons, FontAwesome5, Entypo } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import styles from '../../assets/styles/flashcards.styles';
 import FlashcardReview from '../../components/FlashcardReview';
 
@@ -22,10 +22,12 @@ export default function Flashcards() {
   const [cardFront, setCardFront] = useState('');
   const [cardBack, setCardBack] = useState('');
 
-  // Load decks from device storage on app start
-  useEffect(() => {
-    loadDecksFromStorage();
-  }, []);
+  // Load decks from device storage when screen focuses
+  useFocusEffect(
+    useCallback(() => {
+      loadDecksFromStorage();
+    }, [])
+  );
 
   // Save decks to device storage
   const saveDecksToStorage = async (decksToSave) => {
@@ -207,21 +209,20 @@ export default function Flashcards() {
 
   const renderDeckCard = ({ item }) => (
     <TouchableOpacity style={styles.deckCard} onPress={() => handleDeckClick(item)}>
+      <Text style={styles.deckTitle}>{item.title}</Text>
+      <Text style={styles.deckCardCount}>{item.cards.length} cards</Text>
+      
       <TouchableOpacity 
-        style={styles.settingsButtonHitArea}
+        style={styles.deckSettingsButton}
         onPress={(e) => {
           e.stopPropagation();
           handleDeckSettings(item);
         }}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
-        <View style={styles.settingsButton}>
-          <MaterialIcons name="settings" size={18} color="#FFFFFF" />
-        </View>
+        <MaterialIcons name="settings" size={16} color="#1E2A4A" style={styles.buttonIcon} />
+        <Text style={styles.deckSettingsButtonText}>Settings</Text>
       </TouchableOpacity>
       
-      <Text style={styles.deckTitle}>{item.title}</Text>
-      <Text style={styles.deckCardCount}>{item.cards.length} cards</Text>
       <Text style={styles.deckDate}>
         Created {new Date(item.createdAt).toLocaleDateString()}
       </Text>

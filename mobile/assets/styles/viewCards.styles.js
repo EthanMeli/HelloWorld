@@ -13,37 +13,28 @@ export const createViewCardsStyles = () => StyleSheet.create({
     marginTop: 50,
     fontFamily: 'serif',
   },
-  header: {
+  headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: COLORS.primary,
-    borderBottomWidth: 2,
-    borderBottomColor: COLORS.accent,
+    paddingTop: 10,
+    paddingBottom: 20,
   },
   backButton: {
     padding: 10,
+    marginRight: 15,
   },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerRight: {
-    width: 40, // Match back button width for centering
-  },
-  deckTitle: {
-    fontSize: 20,
+  pageTitle: {
+    fontSize: 28,
     fontWeight: 'bold',
     color: COLORS.accent,
     fontFamily: 'serif',
-  },
-  cardCount: {
-    fontSize: 14,
-    color: COLORS.gray,
-    marginTop: 2,
-    fontFamily: 'serif',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+    textShadowColor: 'rgba(255, 215, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    flex: 1,
   },
   cardsList: {
     flex: 1,
