@@ -78,6 +78,37 @@ const styles = StyleSheet.create({
   listContent: {
     paddingBottom: 100,
   },
+  // Lesson completion styles
+  completedCard: {
+    borderColor: COLORS.accent,
+    backgroundColor: 'rgba(255, 215, 0, 0.05)', // Light golden background
+  },
+  completedBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.accent,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    zIndex: 1,
+  },
+  completedLabel: {
+    color: COLORS.background,
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginLeft: 4,
+    fontFamily: 'serif',
+  },
+  completedLessonButton: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.accent,
+  },
+  completedLessonButtonText: {
+    color: COLORS.accent,
+  },
   chatContainer: {
     flex: 1,
     paddingVertical: 16,

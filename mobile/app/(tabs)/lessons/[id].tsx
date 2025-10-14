@@ -1,8 +1,12 @@
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import React, { JSX, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { JSX, useState, useEffect, useCallback } from 'react';
 import { useLocalSearchParams } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
 import { lessons } from '../../../data/lessons.js'
 import styles from '../../../assets/styles/lesson.styles';
+import { useAuthStore } from '../../../store/authStore';
+import { API_URL } from '../../../constants/api';
+import COLORS from '../../../constants/colors';
 // @ts-ignore - JSX file without types
 import TappableText from '../../../components/lessons/TappableText';
 // @ts-ignore - JSX file without types
@@ -32,12 +36,42 @@ const LessonDetail = () => {
   const [showRPGDialogue, setShowRPGDialogue] = useState(true);
   const [currentDialogueIndex, setCurrentDialogueIndex] = useState(0);
   
+  // State for lesson completion
+  const [lessonStatus, setLessonStatus] = useState({ isCompleted: false, progress: null });
+  const [isLoading, setIsLoading] = useState(false);
+  
   // Get the id parameter from the route
   const { id } = useLocalSearchParams();
+  const { token } = useAuthStore();
 
   // Convert id to number and find the matching lesson
   const lessonId = parseInt(id as string);
   const lesson = lessons.find(lesson => lesson.id === lessonId);
+
+  const checkLessonStatus = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_URL}/progress/lesson/${lessonId}/status`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const status = await response.json();
+        setLessonStatus(status);
+      }
+    } catch (error) {
+      console.error('Error checking lesson status:', error);
+    }
+  }, [lessonId, token]);
+
+  // Check lesson status on component mount
+  useEffect(() => {
+    if (lessonId && token) {
+      checkLessonStatus();
+    }
+  }, [lessonId, token, checkLessonStatus]);
 
   // Handle case where lessons is not found
   if (!lesson) {
@@ -47,6 +81,38 @@ const LessonDetail = () => {
       </View>
     );
   }
+
+  const completeLesson = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${API_URL}/progress/lesson/${lessonId}/complete`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ timeSpent: 60 }) // Default 1 minute for now
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setLessonStatus({ isCompleted: true, progress: result.progress });
+        Alert.alert(
+          'Lesson Complete! 🎉', 
+          `Great job! Your streak is now ${result.progress.streakCount} days.`,
+          [{ text: 'Awesome!', style: 'default' }]
+        );
+      } else {
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.message || 'Failed to complete lesson');
+      }
+    } catch (error) {
+      console.error('Error completing lesson:', error);
+      Alert.alert('Error', 'Failed to connect to server');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Handle RPG dialogue completion
   const handleRPGDialogueComplete = () => {
@@ -194,6 +260,37 @@ const LessonDetail = () => {
               renderDialogueBox(dialogue, index)
             )}
           </ScrollView>
+          
+          {/* Lesson Completion Button */}
+          <View style={customStyles.completionContainer}>
+            {lessonStatus.isCompleted ? (
+              <View style={customStyles.completedBadge}>
+                <MaterialIcons name="check-circle" size={24} color={COLORS.accent} />
+                <Text style={customStyles.completedText}>Lesson Completed! ✨</Text>
+                <TouchableOpacity 
+                  style={customStyles.redoButton} 
+                  onPress={() => setShowRPGDialogue(true)}
+                >
+                  <Text style={customStyles.redoButtonText}>Redo Lesson</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity 
+                style={[customStyles.completeButton, isLoading && customStyles.disabledButton]} 
+                onPress={completeLesson}
+                disabled={isLoading}
+              >
+                <MaterialIcons 
+                  name={isLoading ? "hourglass-empty" : "check-circle-outline"} 
+                  size={20} 
+                  color={COLORS.background} 
+                />
+                <Text style={customStyles.completeButtonText}>
+                  {isLoading ? 'Completing...' : 'Complete Lesson'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </>
       )}
       
@@ -226,7 +323,72 @@ const customStyles = StyleSheet.create({
   },
   speakerContainerRight: {
     justifyContent: 'flex-end',
-  }
+  },
+  completionContainer: {
+    padding: 16,
+    borderTopWidth: 2,
+    borderTopColor: COLORS.accent,
+    backgroundColor: COLORS.cardBackground,
+  },
+  completedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.background,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: COLORS.accent,
+  },
+  completedText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.accent,
+    marginLeft: 8,
+    marginRight: 16,
+    fontFamily: 'serif',
+  },
+  redoButton: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: COLORS.accent,
+  },
+  redoButtonText: {
+    color: COLORS.accent,
+    fontSize: 12,
+    fontWeight: 'bold',
+    fontFamily: 'serif',
+  },
+  completeButton: {
+    backgroundColor: COLORS.accent,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  completeButtonText: {
+    color: COLORS.background,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
+    fontFamily: 'serif',
+    letterSpacing: 0.5,
+  },
+  disabledButton: {
+    opacity: 0.6,
+    backgroundColor: COLORS.textSecondary,
+  },
 });
 
 export default LessonDetail;

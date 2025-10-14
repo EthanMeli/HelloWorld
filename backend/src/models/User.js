@@ -20,6 +20,27 @@ const userSchema = new mongoose.Schema({
   profileImage:{
     type: String,
     default: ""
+  },
+  // Progress tracking
+  completedLessons: [{
+    type: Number,
+    ref: 'Lesson'
+  }],
+  streakCount: {
+    type: Number,
+    default: 0
+  },
+  lastActivityDate: {
+    type: Date,
+    default: null
+  },
+  totalLessonsCompleted: {
+    type: Number,
+    default: 0
+  },
+  joinDate: {
+    type: Date,
+    default: Date.now
   }
 }, {
   timestamps: true
