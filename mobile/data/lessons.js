@@ -59,201 +59,91 @@ export const lessons = [
         },
         grammarNotes: {}
       },
-      // more dialogue entries...
-    ]
-  },
-  {
-    id: 2,
-    displayTitle: "Viel Glück!",
-    title: "Viel Glück!",
-    snippet: "Guten Tag!",
-    grammarTips: [
-      {
-        id: 1,
-        title: "German Capitalization Rule",
-        content: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized."
-      }
-    ],
-    dialogue: [
       {
         speaker: "Hanz",
         isSpeaker1: true,
-        text: "Guten Tag!",
+        text: "Gut, danke! Und dir?",
+        translationText: "Good, thanks! And you?",
         translations: {
-          "Guten": "good",
-          "Tag": "day"
+          "Gut": "good",
+          "danke": "thanks",
+          "Und": "and",
+          "dir": "you"
         },
-        grammarTips: [
-          {
-            id: 1,
-            title: "Common German Greeting",
-            content: "Guten Tag is a common greeting in German. It literally means 'good day' and is used similarly to 'hello' in English."
-          }
-        ]
+        // New property to map words to flashcards
+        vocabularyMap: {
+          // Add other mappings as needed
+        },
+        grammarNotes: {}
       },
       {
         speaker: "Maria",
         isSpeaker1: false,
-        text: "Hallo! Wie geht es dir?",
+        text: "Auch gut, danke!",
+        translationText: "I'm fine too, thanks!",
         translations: {
-          "Hallo": "hello",
-          "Wie": "how",
-          "geht": "goes",
-          "es": "it",
-          "dir": "you"
+          "Auch": "also",
+          "gut": "good",
+          "danke": "thanks",
         },
-        grammarTips: []
+        // New property to map words to flashcards
+        vocabularyMap: {
+          // Add other mappings as needed
+        },
+        grammarNotes: {}
       },
-      // more dialogue entries...
-    ]
-  },
-  {
-    id: 3,
-    displayTitle: "Viel Glück!",
-    title: "Viel Glück!",
-    snippet: "Guten Tag!",
-    grammarTips: [
-      {
-        id: 1,
-        title: "German Capitalization Rule",
-        content: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized."
-      }
-    ],
-    dialogue: [
       {
         speaker: "Hanz",
         isSpeaker1: true,
-        text: "Guten Tag²!",
+        text: "Was machst du heute?",
+        translationText: "What are you doing today?",
         translations: {
-          "Guten": "good",
-          "Tag": "day"
+          "Was": "what",
+          "machst": "are doing",
+          "du": "you",
+          "heute": "today"
         },
-        grammarNotes: {
-          1: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized.",
-          2: "Guten Tag is a common greeting in German. It literally means 'good day' and is used similarly to 'hello' in English."
-        }
+        // New property to map words to flashcards
+        vocabularyMap: {
+          // Add other mappings as needed
+        },
+        grammarNotes: {}
       },
       {
         speaker: "Maria",
         isSpeaker1: false,
-        text: "Hallo! Wie geht es dir?",
+        text: "Ich lerne Deutsch!",
+        translationText: "I am learning German!",
         translations: {
-          "Hallo": "hello",
-          "Wie": "how",
-          "geht": "goes",
-          "es": "it",
-          "dir": "you"
+          "Ich": "I",
+          "lerne": "am learning",
+          "Deutsch": "German"
+        },
+        // New property to map words to flashcards
+        vocabularyMap: {
+          // Add other mappings as needed
+        },
+        grammarNotes: {}
+      },
+      {
+        speaker: "Hanz",
+        isSpeaker1: true,
+        text: "Viel Glück!",
+        translationText: "Good luck!",
+        translations: {
+          "Viel": "much",
+          "Glück": "luck"
+        },
+        // New property to map words to flashcards
+        vocabularyMap: {
+          // Add other mappings as needed
         },
         grammarNotes: {}
       },
       // more dialogue entries...
     ]
   },
-  {
-    id: 4,
-    displayTitle: "Viel Glück!",
-    title: "Viel Glück¹!",
-    snippet: "Guten Tag!",
-    dialogue: [
-      {
-        speaker: "Hanz",
-        isSpeaker1: true,
-        text: "Guten Tag²!",
-        translations: {
-          "Guten": "good",
-          "Tag": "day"
-        },
-        grammarNotes: {
-          1: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized.",
-          2: "Guten Tag is a common greeting in German. It literally means 'good day' and is used similarly to 'hello' in English."
-        }
-      },
-      {
-        speaker: "Maria",
-        isSpeaker1: false,
-        text: "Hallo! Wie geht es dir?",
-        translations: {
-          "Hallo": "hello",
-          "Wie": "how",
-          "geht": "goes",
-          "es": "it",
-          "dir": "you"
-        },
-        grammarNotes: {}
-      },
-      // more dialogue entries...
-    ]
-  },
-  {
-    id: 5,
-    displayTitle: "Viel Glück!",
-    title: "Viel Glück¹!",
-    snippet: "Guten Tag!",
-    dialogue: [
-      {
-        speaker: "Hanz",
-        isSpeaker1: true,
-        text: "Guten Tag²!",
-        translations: {
-          "Guten": "good",
-          "Tag": "day"
-        },
-        grammarNotes: {
-          1: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized.",
-          2: "Guten Tag is a common greeting in German. It literally means 'good day' and is used similarly to 'hello' in English."
-        }
-      },
-      {
-        speaker: "Maria",
-        isSpeaker1: false,
-        text: "Hallo! Wie geht es dir?",
-        translations: {
-          "Hallo": "hello",
-          "Wie": "how",
-          "geht": "goes",
-          "es": "it",
-          "dir": "you"
-        },
-        grammarNotes: {}
-      },
-      // more dialogue entries...
-    ]
-  },
-  {
-    id: 6,
-    displayTitle: "Viel Glück!",
-    title: "Viel Glück¹!",
-    snippet: "Guten Tag!",
-    dialogue: [
-      {
-        speaker: "Hanz",
-        isSpeaker1: true,
-        text: "Guten Tag²!",
-        translations: {
-          "Guten": "good",
-          "Tag": "day"
-        },
-        grammarNotes: {
-          1: "Take a look at the words Glück and Tag. They both have a capital letter. In German, all nouns are capitalized.",
-          2: "Guten Tag is a common greeting in German. It literally means 'good day' and is used similarly to 'hello' in English."
-        }
-      },
-      {
-        speaker: "Maria",
-        isSpeaker1: false,
-        text: "Hallo! Wie geht es dir?",
-        translations: {
-          "Hallo": "hello",
-          "Wie": "how",
-          "geht": "goes",
-          "es": "it",
-          "dir": "you"
-        },
-        grammarNotes: {}
-      },
-      // more dialogue entries...
-    ]
-  }
+  // more lesson entries...
 ];
 
 /**

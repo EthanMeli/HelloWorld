@@ -96,6 +96,7 @@ const LessonDetail = () => {
                 flip={false}
                 size={30}
                 style={{marginRight: 8}}
+                debug={false}
               />
               <Text style={styles.speakerName}>{dialogue.speaker}</Text>
             </>
@@ -107,6 +108,7 @@ const LessonDetail = () => {
                 flip={true}
                 size={30}
                 style={{marginLeft: 8}}
+                debug={false}
               />
             </>
           )}
