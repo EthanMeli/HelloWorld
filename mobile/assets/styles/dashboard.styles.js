@@ -97,20 +97,7 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     fontFamily: 'serif',
   },
-  testButton: {
-    backgroundColor: '#FF6B35',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#E55A2B',
-  },
-  testButtonText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
-    fontFamily: 'serif',
-  },
+  
   streakNumber: {
     fontSize: 48,
     fontWeight: 'bold',

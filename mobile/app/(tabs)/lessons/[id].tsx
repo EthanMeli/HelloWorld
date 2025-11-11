@@ -17,6 +17,12 @@ import GrammarModal from '../../../components/lessons/GrammarModal';
 import DiceBearAvatar from '../../../components/lessons/DiceBearAvatar';
 // @ts-ignore - JSX file without types
 import RPGDialogue from '../../../components/lessons/RPGDialogue';
+// @ts-ignore - JSX files without types
+import ExerciseTranslation from '../../../components/lessons/ExerciseTranslation';
+// @ts-ignore - JSX files without types
+import ExerciseFillBlank from '../../../components/lessons/ExerciseFillBlank';
+// @ts-ignore - JSX files without types
+import ExerciseSpeakingPlaceholder from '../../../components/lessons/ExerciseSpeakingPlaceholder';
 
 // Define interfaces for better type safety
 interface GrammarTip {
@@ -35,6 +41,8 @@ const LessonDetail = () => {
   // State for RPG dialogue progression
   const [showRPGDialogue, setShowRPGDialogue] = useState(true);
   const [currentDialogueIndex, setCurrentDialogueIndex] = useState(0);
+  const [showExercises, setShowExercises] = useState(false);
+  const [exerciseStep, setExerciseStep] = useState(0); // 0: translation, 1: fill blank, 2: speaking
   
   // State for lesson completion
   const [lessonStatus, setLessonStatus] = useState({ isCompleted: false, progress: null });
@@ -231,6 +239,28 @@ const LessonDetail = () => {
   // Check if lesson title tips are completed
   const isLessonTipCompleted = completedTipSources.includes(lessonTitleSourceId);
 
+  // Aggregate all tip sources for this lesson (title + dialogues with tips)
+  const allTipSourceIds: string[] = [
+    ...(lesson.grammarTips && lesson.grammarTips.length > 0 ? [lessonTitleSourceId] : []),
+    ...lesson.dialogue
+      .map((d, idx) => (d.grammarTips && d.grammarTips.length > 0 ? `dialogue-${idx}` : null))
+      .filter(Boolean) as string[]
+  ];
+  const areAllTipsCompleted = allTipSourceIds.every(id => completedTipSources.includes(id));
+
+  // Prepare exercise data from this lesson
+  const dialogueSentences = lesson.dialogue
+    .filter(d => d.text && d.translationText)
+    .slice(0, 3);
+  const translationItems = dialogueSentences.map(d => ({
+    german: d.text,
+    english: d.translationText
+  }));
+  const fillBlankSentences = dialogueSentences.map(d => d.text);
+  // TypeScript interop for JSX components without TS types
+  const translationItemsAny: any = translationItems;
+  const fillBlankSentencesAny: any = fillBlankSentences;
+
   return (
     <View style={styles.container}>
       {showRPGDialogue ? (
@@ -240,6 +270,41 @@ const LessonDetail = () => {
           currentDialogueIndex={currentDialogueIndex}
           isActive={true}
         />
+      ) : showExercises ? (
+        <>
+          {exerciseStep === 0 && (
+            <ExerciseTranslation
+              items={translationItemsAny}
+              onComplete={() => setExerciseStep(1)}
+            />
+          )}
+          {exerciseStep === 1 && (
+            <ExerciseFillBlank
+              sentences={fillBlankSentencesAny}
+              onComplete={() => setExerciseStep(2)}
+            />
+          )}
+          {exerciseStep === 2 && (
+            <ExerciseSpeakingPlaceholder
+              onComplete={() => {
+                setShowExercises(false);
+                setExerciseStep(0);
+              }}
+            />
+          )}
+          <View style={customStyles.completionContainer}>
+            <TouchableOpacity 
+              style={[customStyles.completeButton]}
+              onPress={() => {
+                setShowExercises(false);
+                setExerciseStep(0);
+              }}
+            >
+              <MaterialIcons name="arrow-back" size={20} color={COLORS.background} />
+              <Text style={customStyles.completeButtonText}>Back to Lesson</Text>
+            </TouchableOpacity>
+          </View>
+        </>
       ) : (
         <>
           <View style={customStyles.titleContainer}>
@@ -263,6 +328,22 @@ const LessonDetail = () => {
           
           {/* Lesson Completion Button */}
           <View style={customStyles.completionContainer}>
+            {/* Exercises Button */}
+            <TouchableOpacity 
+              style={[customStyles.exerciseButton, !areAllTipsCompleted && customStyles.disabledButton]}
+              onPress={() => setShowExercises(true)}
+              disabled={!areAllTipsCompleted}
+            >
+              <MaterialIcons 
+                name="sports-esports" 
+                size={20} 
+                color={COLORS.background} 
+              />
+              <Text style={customStyles.completeButtonText}>
+                {areAllTipsCompleted ? 'Exercises' : 'Exercises (Complete grammar tips to unlock)'}
+              </Text>
+            </TouchableOpacity>
+
             {lessonStatus.isCompleted ? (
               <View style={customStyles.completedBadge}>
                 <MaterialIcons name="check-circle" size={24} color={COLORS.accent} />
@@ -376,6 +457,22 @@ const customStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 5,
+  },
+  exerciseButton: {
+    backgroundColor: COLORS.accent,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+    marginBottom: 10,
   },
   completeButtonText: {
     color: COLORS.background,

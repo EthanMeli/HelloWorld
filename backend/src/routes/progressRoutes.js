@@ -125,27 +125,31 @@ router.post("/lesson/:lessonId/complete", protectRoute, async (req, res) => {
   }
 });
 
-// Test endpoint to increment streak (for testing only)
-router.post("/test-streak", protectRoute, async (req, res) => {
+// ADMIN / TEST ONLY: Reset all progress data without deleting users
+// This endpoint clears the Progress collection and resets progress-related fields on all users.
+// IMPORTANT: Restrict access in production (e.g. add role-based middleware). Currently any authenticated user can trigger.
+router.delete("/reset", protectRoute, async (req, res) => {
   try {
-    const userId = req.user._id;
-    const user = await User.findById(userId);
-    
-    // Simulate activity on a new day
-    const nextDay = user.lastActivityDate ? new Date(user.lastActivityDate) : new Date();
-    nextDay.setDate(nextDay.getDate() + 1);
-    
-    user.streakCount += 1;
-    user.lastActivityDate = nextDay;
-    await user.save();
+    // Delete all progress records
+    const deleteResult = await Progress.deleteMany({});
 
-    res.json({ 
-      message: "Streak incremented for testing",
-      streakCount: user.streakCount,
-      lastActivityDate: user.lastActivityDate
+    // Reset user progress fields (preserve accounts)
+    const updateResult = await User.updateMany({}, {
+      $set: {
+        completedLessons: [],
+        streakCount: 0,
+        lastActivityDate: null,
+        totalLessonsCompleted: 0
+      }
+    });
+
+    res.json({
+      message: "Progress data reset successfully",
+      progressRecordsDeleted: deleteResult.deletedCount,
+      usersUpdated: updateResult.modifiedCount
     });
   } catch (error) {
-    console.error("Error incrementing test streak:", error);
+    console.error("Error resetting progress data:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

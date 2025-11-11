@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import ProgressCard from './ProgressCard';
@@ -12,11 +12,7 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const { token } = useAuthStore();
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/progress/dashboard`, {
@@ -38,30 +34,13 @@ const UserDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
-  const testStreak = async () => {
-    try {
-      const response = await fetch(`${API_URL}/progress/test-streak`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
-      if (response.ok) {
-        const data = await response.json();
-        Alert.alert('Success', `Streak incremented! New streak: ${data.streakCount} days`);
-        fetchDashboardData(); // Refresh dashboard
-      } else {
-        Alert.alert('Error', 'Failed to increment streak');
-      }
-    } catch (error) {
-      console.error('Test streak error:', error);
-      Alert.alert('Error', 'Failed to connect to server');
-    }
-  };
+  // Removed test streak increment logic used during development for cleaner production code.
 
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);
@@ -124,14 +103,11 @@ const UserDashboard = () => {
         <View style={styles.streakCard}>
           <View style={styles.streakHeader}>
             <Text style={styles.streakTitle}>🔥 Current Streak</Text>
-            <TouchableOpacity style={styles.testButton} onPress={testStreak}>
-              <Text style={styles.testButtonText}>Test +1</Text>
-            </TouchableOpacity>
           </View>
-          <Text style={styles.streakNumber}>{progress.streakCount}</Text>
-          <Text style={styles.streakSubtext}>
-            {progress.streakCount === 1 ? 'day' : 'days'} in a row
-          </Text>
+            <Text style={styles.streakNumber}>{progress.streakCount}</Text>
+            <Text style={styles.streakSubtext}>
+              {progress.streakCount === 1 ? 'day' : 'days'} in a row
+            </Text>
         </View>
 
         <View style={styles.timeCard}>
